@@ -255,6 +255,15 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
 .rchk{display:flex!important;flex-direction:row;gap:10px;align-items:flex-start;font-weight:400!important}.rchk input{width:20px;height:20px;margin-top:2px;accent-color:#8A6238}
 .rerr{color:#C0392B;margin:0;min-height:0}.rokmsg{background:var(--surface);border:1.5px solid #8A6238;border-radius:14px;padding:22px;font-weight:600}
 .gtable div{grid-template-columns:1.7fr 1fr .8fr!important}
+.exchips{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 16px}.exchips .chip{padding:8px 16px;font-size:.92rem}
+#exampleGrid{grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:12px}
+.example-tile{position:relative;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}.example-tile:hover{transform:translateY(-2px)}
+.example-tile[hidden]{display:none!important}
+.exim{position:relative;display:block}.exim img{aspect-ratio:1;object-fit:cover;width:100%;display:block}
+.exok{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:#C49A62;color:#1C1816;font:700 .85rem/26px var(--b);text-align:center;font-style:normal;opacity:0;transform:scale(.6);transition:.15s}
+.example-tile[aria-pressed=true] .exok{opacity:1;transform:none}
+.exl{display:grid!important;gap:1px;padding:9px 11px 11px!important}.exl strong{font-size:.98rem}.exl small{color:var(--muted);font-size:.8rem}.exl em{font-style:normal;font-weight:600;color:#8A6238;font-size:.85rem;margin-top:3px}
+@media(max-width:760px){#exampleGrid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;padding:2px 2px 10px;margin:0 -4px;-webkit-overflow-scrolling:touch}#exampleGrid .example-tile{flex:0 0 42%;scroll-snap-align:start}.exchips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.exchips .chip{flex:none}}
 </style>
 </head>
 <body>
@@ -481,13 +490,14 @@ const examples=[
  ["grijs-rhombus-verticaal","Grijs · Rhombus verticaal","grey","v","rib"]
 ];
 const gallery=document.createElement('section');gallery.id='composiet-voorbeelden';gallery.className='panel';gallery.style.margin='24px 0 20px';
-gallery.innerHTML='<h2>Composiet schuttingen – kies een voorbeeld</h2><p>Klik op een foto om deze kleur en richting direct in je 3D-ontwerp te laden. De getoonde voorbeelden zijn met zwarte aluminium palen.</p><div class="example-grid" id="exampleGrid"></div>';
+gallery.innerHTML='<div class="shape-heading"><h2>Begin met een voorbeeld</h2><span>Optioneel</span></div><p>Tik op een schutting om kleur, profiel en richting meteen in je 3D-ontwerp over te nemen. Alle uitvoeringen met zwarte aluminium palen.</p><div class="exchips" id="exChips" role="group" aria-label="Filter op kleur"></div><div class="example-grid" id="exampleGrid"></div>';
 document.querySelector('.layout').before(gallery);
 gallery.before(shapeSection);
 const galleryCss=document.createElement('style');document.head.append(galleryCss);
 const setExample=(example,scroll=false)=>{const [slug,label,col,dir,profile]=example;el('color').value=col;el('direction').value=dir;el('profile').value=profile;el('posts').value='alu';update();syncExample();if(scroll)document.querySelector('.layout').scrollIntoView({behavior:'smooth',block:'start'})};
 function syncExample(){document.querySelectorAll('.example-tile').forEach(btn=>{const e=examples.find(item=>item[0]===btn.dataset.slug);const design=state();btn.setAttribute('aria-pressed',String(e[2]===design.color&&e[3]===design.dir&&e[4]===design.profile&&design.posts==='alu'))})}
-for(const example of examples){const [slug,label]=example;const button=document.createElement('button');button.className='example-tile';button.type='button';button.dataset.slug=slug;button.innerHTML='<img src="'+IMG[slug]+'" alt="Composiet schutting '+label+'" loading="lazy"><span>'+label+'</span>';button.onclick=()=>setExample(example,true);el('exampleGrid').append(button)}
+for(const example of examples){const [slug,label]=example;const button=document.createElement('button');button.className='example-tile';button.type='button';button.dataset.slug=slug;const parts=label.split(' · '),dir=example[3]==='v'?'Verticaal':'Horizontaal',prof=example[4]==='grain'?'Houtnerf':'Rhombus';button.dataset.c=example[2];button.innerHTML='<span class="exim"><img src="'+IMG[slug]+'" alt="Composiet schutting '+label+'" loading="lazy"><i class="exok" aria-hidden="true">✓</i></span><span class="exl"><strong>'+parts[0]+'</strong><small>'+prof+' · '+dir.toLowerCase()+'</small><em>'+(example[3]==='v'?'€ 220':'€ 190')+' / m</em></span>';button.onclick=()=>setExample(example,true);el('exampleGrid').append(button)}
+(function(){const C=[['all','Alle'],['teak','Teak'],['oak','Eiken'],['walnut','Walnoot'],['grey','Grijs'],['black','Antraciet']],box=el('exChips');C.forEach(([k,t],i)=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t;b.setAttribute('aria-pressed',i?'false':'true');b.onclick=()=>{box.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));document.querySelectorAll('#exampleGrid .example-tile').forEach(x=>x.hidden=!(k==='all'||x.dataset.c===k));el('exampleGrid').scrollLeft=0};box.append(b)})})();
 ['color','direction','profile','posts'].forEach(id=>el(id).addEventListener('input',syncExample));
 const preset=examples.find(x=>x[0]===new URLSearchParams(location.search).get('voorbeeld'));if(preset)setExample(preset);else syncExample();
 if(new URLSearchParams(location.search).get('gate')==='1'){el('gate').value='1';update()}
