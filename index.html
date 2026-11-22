@@ -246,6 +246,14 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
 .uren{list-style:none;margin:0;padding:0;display:grid;gap:8px}.uren li{display:flex;justify-content:space-between;gap:16px;max-width:240px}.foot .uren{color:#B9A98F}
 .cgrid{display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))}.ccard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px}.ccard h2{font-size:1.8rem;margin-bottom:14px}
 .cline{display:flex;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none}.cline svg{color:#8A6238;flex:none;width:26px;height:26px}.cline small{display:block;color:var(--muted);font-size:.85rem}.cline span{font-weight:600;overflow-wrap:anywhere}.ccard .uren li{max-width:none}
+.revgrid{display:grid;gap:28px;margin-top:24px;align-items:start}@media(min-width:900px){.revgrid{grid-template-columns:1fr 1.1fr}}
+.revnote{font-size:.9rem;color:var(--muted)}.revform{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:14px}
+.revform label{display:grid;gap:6px;font-weight:600}.revform input:not([type=radio]):not([type=checkbox]),.revform textarea{font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;width:100%}
+.stars{border:0;padding:0;margin:0}.stars legend{font-weight:600;margin-bottom:6px;padding:0}.starrow{display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:4px}
+.stars input{position:absolute;opacity:0}.stars label{font-size:2rem;line-height:1;color:#D9CDB8;cursor:pointer;display:inline}
+.stars input:checked~label,.stars label:hover,.stars label:hover~label{color:#C49A62}.stars input:focus-visible+label{outline:3px solid var(--amber);outline-offset:2px;border-radius:4px}
+.rchk{display:flex!important;flex-direction:row;gap:10px;align-items:flex-start;font-weight:400!important}.rchk input{width:20px;height:20px;margin-top:2px;accent-color:#8A6238}
+.rerr{color:#C0392B;margin:0;min-height:0}.rokmsg{background:var(--surface);border:1.5px solid #8A6238;border-radius:14px;padding:22px;font-weight:600}
 </style>
 </head>
 <body>
@@ -288,6 +296,31 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
 <section class="band"><div class="w band-in">
   <img src="fotos/walnoot-horizontaal-klein.jpg" alt="Composiet schutting in walnoot met zwarte aluminium palen" loading="lazy">
   <div><p class="kick">Een complete afwerking</p><h2>Maak je tuin compleet met een bijpassende poort.</h2><p>Onze enkele en dubbele composietpoorten sluiten aan op jouw schutting. Kies je maat, hoogte en kleur voor één strakke uitstraling.</p><a class="btn barrow" href="#offerte">Poort toevoegen in de ontwerper <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+</div></section>
+
+<section id="reviews" class="stappen"><div class="w">
+  <p class="kick">Ervaringen</p>
+  <h2>Wat klanten zeggen</h2>
+  <div class="revgrid">
+    <div><p class="lead" style="margin-top:0">Heeft De Composiet Specialist jouw schutting geplaatst? Vertel andere tuinliefhebbers hoe het ging. Na controle zetten we je review op deze pagina.</p>
+      <p class="revnote">We plaatsen alleen echte reviews van klanten, met voornaam en woonplaats.</p></div>
+    <form id="revform" class="revform" novalidate>
+      <label>Voornaam<input id="rnaam" autocomplete="given-name" required></label>
+      <label>Woonplaats<input id="rplaats" autocomplete="address-level2"></label>
+      <fieldset class="stars"><legend>Hoeveel sterren geef je?</legend><div class="starrow">
+        <input type="radio" name="rster" id="s5" value="5" checked><label for="s5" title="5 sterren">★</label>
+        <input type="radio" name="rster" id="s4" value="4"><label for="s4" title="4 sterren">★</label>
+        <input type="radio" name="rster" id="s3" value="3"><label for="s3" title="3 sterren">★</label>
+        <input type="radio" name="rster" id="s2" value="2"><label for="s2" title="2 sterren">★</label>
+        <input type="radio" name="rster" id="s1" value="1"><label for="s1" title="1 ster">★</label></div>
+      </fieldset>
+      <label>Jouw ervaring<textarea id="rtekst" rows="4" placeholder="Bijvoorbeeld: snel geplaatst, netjes gewerkt…" required></textarea></label>
+      <label class="rchk"><input type="checkbox" id="rok"> Mijn voornaam, woonplaats en review mogen op de website.</label>
+      <button class="btn" type="submit">Review versturen</button>
+      <p id="rerr" class="rerr" role="alert"></p>
+    </form>
+    <div id="rok-msg" class="rokmsg" role="status" hidden></div>
+  </div>
 </div></section>
 
 <section id="vragen"><div class="w">
@@ -542,6 +575,17 @@ l.addEventListener('click',function(e){if(e.target.closest('a'))close()});window
 document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
 function sc(){t.classList.toggle('on',window.scrollY>600)}window.addEventListener('scroll',sc,{passive:true});sc();
 t.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});})();
+
+(function(){var f=document.getElementById('revform');if(!f)return;var E=function(i){return document.getElementById(i)};
+f.addEventListener('submit',function(e){e.preventDefault();var n=E('rnaam').value.trim(),t=E('rtekst').value.trim(),err=E('rerr'),st=(f.querySelector('input[name=rster]:checked')||{}).value||'5';
+ if(!n||!t){err.textContent='Vul je voornaam en je ervaring in.';return}
+ if(!E('rok').checked){err.textContent='Vink aan dat we je review op de website mogen zetten.';return}
+ err.textContent='';var b=f.querySelector('button');b.disabled=true;b.textContent='Bezig met versturen…';
+ fetch('https://formsubmit.co/ajax/'+FORM_EMAIL,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({_subject:'Nieuwe review van '+n,_template:'table',Soort:'Review voor de website',Voornaam:n,Woonplaats:E('rplaats').value.trim()||'-',Sterren:st+' van 5',Review:t,Toestemming:'Ja, mag op de website'})})
+ .then(function(r){return r.json().then(function(j){if(!r.ok||String(j.success)!=='true')throw 0})})
+ .then(function(){f.hidden=true;var m=E('rok-msg');m.hidden=false;m.textContent='Bedankt voor je review, '+n+'! We bekijken hem en zetten hem binnenkort op de site.'})
+ .catch(function(){err.textContent='Versturen is niet gelukt. Probeer het later nog eens of stuur je review via WhatsApp.'})
+ .finally(function(){b.disabled=false;b.textContent='Review versturen'})})})();
 </script>
 </body>
 </html>
