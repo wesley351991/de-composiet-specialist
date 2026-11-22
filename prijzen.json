@@ -1,0 +1,73 @@
+{
+  "horizontaal": 190,
+  "verticaal": 220,
+  "snelbeton": 11.75,
+  "slopen": 50,
+  "transport_km": 1.5,
+  "onderprofiel_9": 20,
+  "onderprofiel_25": 50,
+  "aanbetaling_procent": 30,
+  "poorten": [
+    {
+      "breedte": 90,
+      "hoogte": 180,
+      "frame": "aluminium",
+      "prijs": 750,
+      "standaard": true
+    },
+    {
+      "breedte": 90,
+      "hoogte": 200,
+      "frame": "aluminium",
+      "prijs": 800
+    },
+    {
+      "breedte": 100,
+      "hoogte": 180,
+      "frame": "ijzer",
+      "prijs": 1150
+    },
+    {
+      "breedte": 100,
+      "hoogte": 200,
+      "frame": "ijzer",
+      "prijs": 1200
+    },
+    {
+      "breedte": 125,
+      "hoogte": 180,
+      "frame": "ijzer",
+      "prijs": 1250
+    },
+    {
+      "breedte": 125,
+      "hoogte": 200,
+      "frame": "ijzer",
+      "prijs": 1350
+    },
+    {
+      "breedte": 250,
+      "hoogte": 180,
+      "frame": "ijzer",
+      "prijs": 2050
+    },
+    {
+      "breedte": 250,
+      "hoogte": 200,
+      "frame": "ijzer",
+      "prijs": 2150
+    },
+    {
+      "breedte": 300,
+      "hoogte": 180,
+      "frame": "ijzer",
+      "prijs": 2300
+    },
+    {
+      "breedte": 300,
+      "hoogte": 200,
+      "frame": "ijzer",
+      "prijs": 2400
+    }
+  ]
+}
