@@ -181,6 +181,8 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
 .lbin img{max-width:100%;max-height:68vh;border-radius:12px;filter:brightness(1.05)}
 .lbcap{color:#F1E9DB;font:700 1.5rem var(--d)}
 .lbx{position:absolute;top:-6px;right:-6px;width:42px;height:42px;border-radius:50%;border:0;background:#F7F4EE;color:#1C1816;font-size:1.6rem;cursor:pointer;z-index:2}
+.tooltitle{max-width:22ch}.tooltitle em{font-style:normal;color:var(--moss)}
+.cardbody .ckick{margin:0 0 6px;font:700 .74rem var(--b);letter-spacing:.12em;text-transform:uppercase;color:#8A6238}.cardbody .cdesc{margin:4px 0 0;color:var(--ink);font-size:1rem}.cardbody .cmeta{margin:0 0 14px;color:var(--muted);font-size:.88rem}.cardbody .cbtn{background:#1C1816;color:#F1E9DB;padding:15px 24px;font-weight:700}.cardbody .cbtn:hover{filter:none;background:#2c2622}
 </style>
 <style>@media(max-width:600px){.hero h1{font-size:clamp(2rem,9.5vw,3rem)}}h1,h2{overflow-wrap:break-word}.wa{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;width:58px;height:58px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.28);transition:transform .2s}.wa:hover{transform:scale(1.06)}.wa:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
 .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:18px;margin-top:26px}.gallery button{all:unset;box-sizing:border-box;cursor:zoom-in;display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(60,40,20,.05),0 10px 30px -18px rgba(60,40,20,.25)}.gallery button:focus-visible{outline:3px solid var(--amber);outline-offset:3px}.gallery img{display:block;width:100%;aspect-ratio:1672/730;object-fit:cover;transition:transform .4s}.gallery button:hover img{transform:scale(1.03)}.gallery span{display:block;padding:12px 14px;font-weight:600}
@@ -275,13 +277,13 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
 <div class="page on" data-page="home"><div class="hero hero2">
   <div class="w hero-in">
     <p class="kick">De specialist in composiet</p>
-    <h1>Jouw nieuwe composiet&shy;schutting. <em>Direct een prijs in 3D.</em></h1>
-    <p>Stel je eigen composietschutting samen, bekijk je ontwerp in 3D en ontvang direct een vrijblijvende prijsindicatie. Inclusief professionele montage, binnen 2 weken geplaatst.</p>
+    <h1>Composiet schuttingen. <em>Strak, onderhoudsvrij en vakkundig geplaatst.</em></h1>
+    <p>Duurzame composiet schuttingen met zwarte aluminium palen, op maat geplaatst door ons eigen team. Geen schilderwerk, geen rot en jarenlang mooi. Inclusief professionele montage, binnen 2 weken geplaatst.</p>
     <div class="cta"><a class="btn barrow" href="#offerte">Gratis offerte maken <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn o" href="#schuttingen">Bekijk alle schuttingen</a></div>
     <p class="from">Vanaf <span data-pr="horizontaal">€ 190</span> per meter · inclusief montage</p>
   </div>
 </div>
-<div class="uspstrip"><div class="w"><span>✓ Op maat ontworpen</span><span>✓ Professionele montage</span><span>✓ Binnen 2 weken geplaatst</span><span>✓ Vrijblijvende 3D-prijsindicatie</span></div></div>
+<div class="uspstrip"><div class="w"><span>✓ Op maat ontworpen</span><span>✓ Professionele montage</span><span>✓ Binnen 2 weken geplaatst</span><span>✓ Onderhoudsvrij</span></div></div>
 
 <section id="collectie"><div class="w center">
   <p class="kick">Onze collectie</p>
@@ -352,7 +354,7 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
   <p class="kick">Werkzaamheden</p>
   <h2>Van oude schutting naar luxe tuinafscheiding.</h2>
   <p class="lead">De Composiet Specialist levert en plaatst composiet schuttingen en poorten. Wij komen bij je langs, meten alles op en zetten je nieuwe schutting vakkundig neer. Met <strong>meer dan 10 jaar ervaring</strong> werken we in <strong>Noord-Brabant, Limburg, Gelderland en Utrecht</strong>.</p>
-  <div class="vid"><video controls playsinline preload="none" poster="video/poster.jpg" aria-label="Filmpje over composiet schuttingen van De Composiet Specialist"><source src="video/composiet-schuttingen.mp4" type="video/mp4"></video></div>
+  <div class="vid"><video controls playsinline preload="none" poster="video/poster.jpg" aria-label="Filmpje over composiet schuttingen van De Composiet Specialist"><source src="video/composiet-schuttingen.mp4" type="video/mp4" onerror="var v=this.closest('.vid');if(v)v.style.display='none'"></video></div>
   <div class="gallery" id="homeFotos"></div>
   <p style="margin-top:22px"><a class="btn barrow" href="#projecten">Bekijk werkzaamheden en sfeerimpressies <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
 </div></section>
@@ -379,8 +381,8 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
   <div class="ccard"><h2>Openingstijden</h2><ul class="uren"><li><span>Ma–vr</span><span>08:00 – 18:00</span></li><li><span>Za</span><span>09:00 – 15:00</span></li><li><span>Zo</span><span>Gesloten</span></li></ul>
     <h2 style="margin-top:28px">Werkgebied</h2><p>Vanuit Helmond werken we in <strong>Noord-Brabant, Limburg, Gelderland en Utrecht</strong>. Plaatsing binnen 2 weken.</p></div>
 </div></section></div><div class="page" data-page="offerte"><section class="tool" id="offerte"><div class="w">
-  <h2>Ontwerp je schutting in 3D</h2>
-  <p class="lead">Kies een indeling, vul de lengtes in en draai het ontwerp rond. De prijs, inclusief plaatsing, zie je direct.</p>
+  <h2 class="tooltitle">Jouw nieuwe composiet&shy;schutting. <em>Direct een prijs in 3D.</em></h2>
+  <p class="lead">Stel je eigen composietschutting samen, bekijk je ontwerp in 3D en ontvang direct een vrijblijvende prijsindicatie. Kies een indeling, vul de lengtes in en draai het ontwerp rond. Inclusief professionele montage, binnen 2 weken geplaatst.</p>
   <div class="layout">
     <section class="panel"><h2>Je ontwerp</h2>
       <label for="shape">Opstelling</label><select id="shape"></select>
@@ -557,8 +559,11 @@ function route(){var h=(location.hash||'#home').slice(1),p=PAGES.indexOf(h)>=0?h
  document.title=TITLES[p];window.scrollTo(0,0);if(t)setTimeout(function(){t.scrollIntoView()},0);if(p==='offerte')draw()}
 window.addEventListener('hashchange',route);
 function card(e){var s=e[0],l=e[1],d=e[3],pr=eur0(d==='h'?P.horizontaal:P.verticaal);
+ var kl={teak:'Teak',oak:'Eiken',walnut:'Walnoot',grey:'Grijs',black:'Antraciet'}[e[2]],prof=e[4]==='grain'?'Houtnerf':'Rhombus',rt=d==='h'?'horizontaal':'verticaal';
+ var look={teak:'Warme houtlook',oak:'Lichte, natuurlijke houtlook',walnut:'Diepe, donkere houtlook',grey:'Rustige, tijdloze uitstraling',black:'Moderne, donkere uitstraling'}[e[2]];
+ var desc=look+(e[4]==='grain'?' met een natuurlijke houtnerf op brede '+(d==='h'?'horizontale':'verticale')+' planken.':' met een strak '+rt+' reliëf.');
  var a=document.createElement('article');a.className='card';a.dataset.d=d;
- a.innerHTML='<button type="button" class="cardimg"><img src="'+IMGF[s]+'" alt="Composiet schutting '+l+'" loading="lazy"><span class="tag2">'+(d==='h'?'Horizontaal':'Verticaal')+'</span></button><div class="cardbody"><div class="chead"><h3>'+l+'</h3><div class="cprice"><small>vanaf</small><strong>'+pr+'</strong><small>per meter</small></div></div><p>Zwarte aluminium palen en montage inbegrepen.</p><button type="button" class="btn">Stel jouw schutting samen</button></div>';
+ a.innerHTML='<button type="button" class="cardimg"><img src="'+IMGF[s]+'" alt="Composiet schutting '+l+'" loading="lazy"></button><div class="cardbody"><div class="chead"><div><p class="ckick">'+prof+' • '+rt+'</p><h3>'+kl+' '+prof+'</h3></div><div class="cprice"><small>vanaf</small><strong>'+pr+'</strong><small>per meter</small></div></div><p class="cdesc">'+desc+'</p><p class="cmeta">Met zwarte aluminium palen · incl. montage</p><button type="button" class="btn cbtn">Stel jouw schutting samen →</button></div>';
  a.querySelector('.btn').addEventListener('click',function(){setExample(e);location.hash='offerte'});
  a.querySelector('.cardimg').addEventListener('click',function(){openLb(IMGF[s],l,e)});return a}
 function openLb(src,l,e){var o=document.getElementById('lb');if(!o){o=document.createElement('div');o.id='lb';o.innerHTML='<div class="lbin"><button type="button" class="lbx" aria-label="Sluiten">×</button><img alt=""><div class="lbcap"></div><button type="button" class="btn lbgo">Stel jouw schutting samen</button></div>';document.body.appendChild(o);
