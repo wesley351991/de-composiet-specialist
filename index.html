@@ -217,12 +217,12 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
 @media(max-width:760px){.fgrid{grid-template-columns:1fr 1fr;gap:34px 20px}.fcol-brand{grid-column:1/-1}.fl a span{overflow-wrap:anywhere}}
 .mbar{display:none}
 @media(max-width:760px){
- .mbar{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:rgba(247,244,238,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line)}
+ .mbar{display:grid;grid-template-columns:1fr 56px 1fr;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:rgba(247,244,238,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line)}
  .mbar a{display:flex;align-items:center;justify-content:center;gap:10px;min-height:50px;border-radius:12px;font:600 1.05rem var(--b);text-decoration:none}
  .mb-call{border:2px solid var(--ink);color:var(--ink)}
- .mb-off{padding:0}
+ .mb-off{padding:0;grid-column:3}
  body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
- .wa{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+ .wa{left:50%;right:auto;transform:translateX(-50%);width:52px;height:52px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:70}.wa:hover{transform:translateX(-50%)}.wa svg{width:28px;height:28px}
  .totop{bottom:calc(158px + env(safe-area-inset-bottom,0px))}
 }
 .vid{margin-top:28px;border-radius:14px;overflow:hidden;background:#17130F;box-shadow:0 1px 2px rgba(60,40,20,.05),0 10px 30px -18px rgba(60,40,20,.25)}.vid video{display:block;width:100%;aspect-ratio:16/9;height:auto}
@@ -266,6 +266,11 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
 .example-tile[aria-pressed=true] .exok{opacity:1;transform:none}
 .exl{display:grid!important;gap:1px;padding:9px 11px 11px!important}.exl strong{font-size:.98rem}.exl small{color:var(--muted);font-size:.8rem}.exl em{font-style:normal;font-weight:600;color:#8A6238;font-size:.85rem;margin-top:3px}
 @media(max-width:760px){#exampleGrid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;padding:2px 2px 10px;margin:0 -4px;-webkit-overflow-scrolling:touch}#exampleGrid .example-tile{flex:0 0 42%;scroll-snap-align:start}.exchips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.exchips .chip{flex:none}}
+.chead{border-bottom:0;padding-bottom:0}
+.pbar.cprice{display:flex;flex-direction:row;align-items:baseline;justify-content:center;gap:10px;text-align:center;padding:12px 14px;background:linear-gradient(180deg,#2B241D,#17130F);border-top:2px solid #C49A62;line-height:1}
+.pbar.cprice small{font:600 .8rem var(--b);letter-spacing:.14em;text-transform:uppercase;color:#D8CBB8}
+.pbar.cprice strong{font:800 1.9rem var(--d);color:#E2BE8C;letter-spacing:.01em}
+.cardimg .tag2{bottom:62px}.cardimg::after{bottom:62px}
 </style>
 </head>
 <body>
@@ -563,7 +568,7 @@ function card(e){var s=e[0],l=e[1],d=e[3],pr=eur0(d==='h'?P.horizontaal:P.vertic
  var look={teak:'Warme houtlook',oak:'Lichte, natuurlijke houtlook',walnut:'Diepe, donkere houtlook',grey:'Rustige, tijdloze uitstraling',black:'Moderne, donkere uitstraling'}[e[2]];
  var desc=look+(e[4]==='grain'?' met een natuurlijke houtnerf op brede '+(d==='h'?'horizontale':'verticale')+' planken.':' met een strak '+rt+' reliëf.');
  var a=document.createElement('article');a.className='card';a.dataset.d=d;
- a.innerHTML='<button type="button" class="cardimg"><img src="'+IMGF[s]+'" alt="Composiet schutting '+l+'" loading="lazy"></button><div class="cardbody"><div class="chead"><div><p class="ckick">'+prof+' • '+rt+'</p><h3>'+kl+' '+prof+'</h3></div><div class="cprice"><small>vanaf</small><strong>'+pr+'</strong><small>per meter</small></div></div><p class="cdesc">'+desc+'</p><p class="cmeta">Met zwarte aluminium palen · incl. montage</p><button type="button" class="btn cbtn">Stel jouw schutting samen →</button></div>';
+ a.innerHTML='<button type="button" class="cardimg"><img src="'+IMGF[s]+'" alt="Composiet schutting '+l+'" loading="lazy"><span class="tag2">'+(d==='h'?'Horizontaal':'Verticaal')+'</span><span class="pbar cprice"><small>Vanaf</small><strong>'+pr+'</strong><small>per meter</small></span></button><div class="cardbody"><div class="chead"><div><p class="ckick">'+prof+' • '+rt+'</p><h3>'+kl+' '+prof+'</h3></div></div><p class="cdesc">'+desc+'</p><p class="cmeta">Met zwarte aluminium palen · incl. montage</p><button type="button" class="btn cbtn">Stel jouw schutting samen →</button></div>';
  a.querySelector('.btn').addEventListener('click',function(){setExample(e);location.hash='offerte'});
  a.querySelector('.cardimg').addEventListener('click',function(){openLb(IMGF[s],l,e)});return a}
 function openLb(src,l,e){var o=document.getElementById('lb');if(!o){o=document.createElement('div');o.id='lb';o.innerHTML='<div class="lbin"><button type="button" class="lbx" aria-label="Sluiten">×</button><img alt=""><div class="lbcap"></div><button type="button" class="btn lbgo">Stel jouw schutting samen</button></div>';document.body.appendChild(o);
