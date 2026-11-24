@@ -522,7 +522,7 @@ function cname(k){return {teak:'Teak',oak:'Eiken',walnut:'Walnoot',grey:'Grijs',
 function sync(s){var r=document.documentElement;r.style.setProperty('--c',colors[s.color]);r.setAttribute('data-o',s.dir);var t=document.getElementById('tag');if(t)t.textContent=cname(s.color)+', '+(s.dir==='h'?'horizontale':'verticale')+' planken'}
 document.querySelectorAll('.tile').forEach(function(t){t.addEventListener('click',function(){el('color').value=t.dataset.k;update();syncExample();location.hash='offerte'})});
 // Offerteaanvragen gaan via FormSubmit (formsubmit.co) naar dit adres:
-var FORM_EMAIL='info@decomposietspecialist.nl';
+var FORM_EMAIL='webmaster@decomposietspecialist.nl';
 document.getElementById('form').addEventListener('submit',function(e){e.preventDefault();
  var f=this,n=el('naam').value.trim(),m=el('mail').value.trim(),p=el('pc').value.trim(),err=el('err');
  if(!n||!/^\S+@\S+\.\S+$/.test(m)||!p){err.textContent='Vul je naam, e-mailadres en postcode in.';err.style.display='block';return}
