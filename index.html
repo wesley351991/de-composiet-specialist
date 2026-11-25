@@ -271,6 +271,7 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
 .pbar.cprice small{font:600 .8rem var(--b);letter-spacing:.14em;text-transform:uppercase;color:#D8CBB8}
 .pbar.cprice strong{font:800 1.9rem var(--d);color:#E2BE8C;letter-spacing:.01em}
 .cardimg .tag2{bottom:62px}.cardimg::after{bottom:62px}
+.wanote{margin:10px 0 0;font-size:.88rem}.btn.wabtn{background:#25D366;color:#fff;margin-top:10px;display:inline-block}.btn.wabtn:hover{filter:brightness(.95)}
 </style>
 </head>
 <body>
@@ -421,6 +422,7 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
     <p class="note">Laat je gegevens achter. We controleren je ontwerp en sturen je een vaste offerte.</p>
     <form id="form" novalidate><div class="fields"><input type="text" id="naam" placeholder="Voor- en achternaam" autocomplete="name" aria-label="Naam"><input type="text" id="adres" placeholder="Straat en huisnummer (niet verplicht)" autocomplete="street-address" aria-label="Adres"><div class="two"><input type="text" id="pc" placeholder="Postcode" autocomplete="postal-code" aria-label="Postcode"><input type="text" id="plaats" placeholder="Woonplaats" autocomplete="address-level2" aria-label="Plaats"></div><input type="email" id="mail" placeholder="E-mailadres" autocomplete="email" aria-label="E-mailadres"><input type="tel" id="tel" placeholder="Telefoon (niet verplicht)" autocomplete="tel" aria-label="Telefoon"><select id="plan" aria-label="Gewenste plaatsing"><option>Plaatsing in overleg</option><option>Zo snel mogelijk</option><option>Binnen 2 weken</option><option>Binnen drie maanden</option></select></div>
       <button class="btn" type="submit">Offerte aanvragen</button>
+      <p class="note wanote">Na het versturen opent WhatsApp met je offerte erin. Tik daar op verzenden, dan hebben wij hem ook direct op WhatsApp.</p>
       <p class="note" id="err" style="color:#C0392B;margin:10px 0 0;display:none">Vul je naam, e-mailadres en postcode in.</p></form>
     <div class="ok" id="ok" role="status"></div></div>
 </div></section>
@@ -526,6 +528,7 @@ if(new URLSearchParams(location.search).get('gate')==='1'){el('gate').value='1';
 function cname(k){return {teak:'Teak',oak:'Eiken',walnut:'Walnoot',grey:'Grijs',black:'Antraciet'}[k]}
 function sync(s){var r=document.documentElement;r.style.setProperty('--c',colors[s.color]);r.setAttribute('data-o',s.dir);var t=document.getElementById('tag');if(t)t.textContent=cname(s.color)+', '+(s.dir==='h'?'horizontale':'verticale')+' planken'}
 document.querySelectorAll('.tile').forEach(function(t){t.addEventListener('click',function(){el('color').value=t.dataset.k;update();syncExample();location.hash='offerte'})});
+function waBtn(u,l){var a=document.createElement('a');a.className='btn wabtn';a.href=u;a.target='_blank';a.rel='noopener';a.textContent=l;return a}
 // Offerteaanvragen gaan via FormSubmit (formsubmit.co) naar dit adres:
 var FORM_EMAIL='webmaster@decomposietspecialist.nl';
 document.getElementById('form').addEventListener('submit',function(e){e.preventDefault();
@@ -536,12 +539,15 @@ document.getElementById('form').addEventListener('submit',function(e){e.preventD
  var data={_subject:'Offerteaanvraag van '+n,_replyto:m,_template:'table',
   Naam:n,'E-mail':m,Telefoon:el('tel').value.trim()||'-',Adres:el('adres').value.trim()||'-',Postcode:p,Woonplaats:el('plaats').value.trim()||'-',
   Plaatsing:el('plan').value,Poort:s.gate?s.gateLabel+' ('+euro(s.gatePriceVal)+')':'Geen','Oude schutting slopen':el('old').value==='1'?'Ja':'Nee',Afvoeren:el('afvoer').value==='1'?'Ja (in overleg)':'Nee',Hoogteverschil:el('hv').value==='0'?'Nee':el('hv').value,Ontwerp:ontwerp,'Prijsindicatie (incl. plaatsing)':el('price').textContent};
+ var wt=['Hallo De Composiet Specialist, ik heb via de website een offerte aangevraagd:','','Naam: '+n,'Woonplaats: '+(data.Woonplaats!=='-'?data.Woonplaats+' ':'')+'('+p+')','Telefoon: '+data.Telefoon,'E-mail: '+m,'','Ontwerp: '+ontwerp,'Poort: '+data.Poort,'Oude schutting slopen: '+data['Oude schutting slopen'],'Afvoeren: '+data.Afvoeren,'Hoogteverschil: '+data.Hoogteverschil,'Plaatsing: '+data.Plaatsing,'Prijsindicatie: '+el('price').textContent+' (incl. plaatsing)'].join('\n');
+ var wa='https://wa.me/31641071486?text='+encodeURIComponent(wt);
+ try{window.open(wa,'_blank','noopener')}catch(x){}
  if(btn){btn.disabled=true;btn.dataset.t=btn.textContent;btn.textContent='Bezig met versturen…'}
  fetch('https://formsubmit.co/ajax/'+FORM_EMAIL,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)})
  .then(function(r){return r.json().then(function(j){if(!r.ok||String(j.success)!=='true')throw 0})})
  .then(function(){f.style.display='none';var o=el('ok');o.style.display='block';
-  o.textContent='Bedankt, '+n+'! We hebben je aanvraag voor '+ontwerp+' (indicatief '+el('price').textContent+' incl. plaatsing) ontvangen en nemen snel contact met je op via '+m+'.'})
- .catch(function(){err.textContent='Versturen is niet gelukt. Probeer het later nog eens of neem telefonisch contact met ons op.';err.style.display='block'})
+  o.innerHTML='';var t=document.createElement('p');t.style.margin='0 0 14px';t.textContent='Bedankt, '+n+'! We hebben je aanvraag voor '+ontwerp+' (indicatief '+el('price').textContent+' incl. plaatsing) ontvangen en nemen snel contact met je op via '+m+'.';o.append(t,waBtn(wa,'Stuur je offerte ook via WhatsApp'))})
+ .catch(function(){err.innerHTML='';var t=document.createElement('span');t.textContent='Versturen per e-mail is niet gelukt. Stuur je offerte via WhatsApp, dan ontvangen wij hem direct.';err.append(t,document.createElement('br'),waBtn(wa,'Offerte via WhatsApp sturen'));err.style.display='block'})
  .finally(function(){if(btn){btn.disabled=false;btn.textContent=btn.dataset.t}})});
 
 function breakdown(s,len,rate,gp){
