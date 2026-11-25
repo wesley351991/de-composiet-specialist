@@ -569,6 +569,7 @@ function route(){var h=(location.hash||'#home').slice(1),p=PAGES.indexOf(h)>=0?h
  document.querySelectorAll('.links a[data-p]').forEach(function(a){if(a.dataset.p===p)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
  document.title=TITLES[p];window.scrollTo(0,0);if(t)setTimeout(function(){t.scrollIntoView()},0);if(p==='offerte')draw()}
 window.addEventListener('hashchange',route);
+window.addEventListener('hashchange',function(){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:location.pathname+location.hash,title:document.title})}catch(e){}});
 function card(e){var s=e[0],l=e[1],d=e[3],pr=eur0(d==='h'?P.horizontaal:P.verticaal);
  var kl={teak:'Teak',oak:'Eiken',walnut:'Walnoot',grey:'Grijs',black:'Antraciet'}[e[2]],prof=e[4]==='grain'?'Houtnerf':'Rhombus',rt=d==='h'?'horizontaal':'verticaal';
  var look={teak:'Warme houtlook',oak:'Lichte, natuurlijke houtlook',walnut:'Diepe, donkere houtlook',grey:'Rustige, tijdloze uitstraling',black:'Moderne, donkere uitstraling'}[e[2]];
@@ -632,5 +633,6 @@ fetch('prijzen.json?v='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():nul
  try{update()}catch(e){};document.querySelectorAll('#homeGrid,#prodGrid,#projGrid').forEach(g=>g.querySelectorAll('.cprice strong').forEach(st=>{const c=st.closest('.card');st.textContent=eur0(c&&c.dataset.d==='v'?P.verticaal:P.horizontaal)}));
  document.querySelectorAll('#exampleGrid .example-tile em').forEach(em=>{const t=em.closest('.example-tile');const ex=examples.find(x=>x[0]===t.dataset.slug);if(ex)em.textContent=eur0(ex[3]==='v'?P.verticaal:P.horizontaal)+' / m'})}).catch(()=>{});
 </script>
+<script data-goatcounter="https://decomposietspecialist.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
