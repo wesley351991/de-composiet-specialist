@@ -300,6 +300,7 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
 .pbar.cprice em{font:500 .85rem var(--b);font-style:normal;color:#D8CBB8}
 .pbar.cprice .pm{font:500 .78rem var(--b);color:#B9A98F;white-space:nowrap}
 .cardimg::after{content:"";width:34px;height:34px;padding:0;right:10px;top:10px;bottom:auto;border-radius:50%;background:rgba(247,244,238,.92) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231C1816' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6'/%3E%3Cpath d='M15 15l5 5M10.5 8v5M8 10.5h5'/%3E%3C/svg%3E") center/18px no-repeat}
+.sitfoto{margin-top:4px}.sitlbl{display:block;font-weight:600;font-size:.95rem}.sitlbl span{font-weight:400;color:var(--muted)}.sitnote{margin:4px 0 8px;color:var(--muted);font-size:.88rem}.sitbtn{display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border:1.5px dashed #C49A62;border-radius:12px;background:#FBF6EE;font-weight:600;cursor:pointer}.sitprev{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.sitth{position:relative;width:76px;height:76px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}.sitth img{width:100%;height:100%;object-fit:cover;display:block}.sitth button{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(28,24,22,.8);color:#fff;font-size:1rem;line-height:24px;cursor:pointer;padding:0}
 </style>
 </head>
 <body>
@@ -448,7 +449,7 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
   </div>
   <div class="panel" id="aanvraag" style="margin-top:20px"><h2>Offerte aanvragen</h2>
     <p class="note">Laat je gegevens achter. We controleren je ontwerp en sturen je een vaste offerte.</p>
-    <form id="form" novalidate><div class="fields"><input type="text" id="naam" placeholder="Voor- en achternaam" autocomplete="name" aria-label="Naam"><input type="text" id="adres" placeholder="Straat en huisnummer (niet verplicht)" autocomplete="street-address" aria-label="Adres"><div class="two"><input type="text" id="pc" placeholder="Postcode" autocomplete="postal-code" aria-label="Postcode"><input type="text" id="plaats" placeholder="Woonplaats" autocomplete="address-level2" aria-label="Plaats"></div><input type="email" id="mail" placeholder="E-mailadres" autocomplete="email" aria-label="E-mailadres"><input type="tel" id="tel" placeholder="Telefoon (niet verplicht)" autocomplete="tel" aria-label="Telefoon"><select id="plan" aria-label="Gewenste plaatsing"><option>Plaatsing in overleg</option><option>Zo snel mogelijk</option><option>Binnen 2 weken</option><option>Binnen drie maanden</option></select></div>
+    <form id="form" novalidate><div class="fields"><input type="text" id="naam" placeholder="Voor- en achternaam" autocomplete="name" aria-label="Naam"><input type="text" id="adres" placeholder="Straat en huisnummer (niet verplicht)" autocomplete="street-address" aria-label="Adres"><div class="two"><input type="text" id="pc" placeholder="Postcode" autocomplete="postal-code" aria-label="Postcode"><input type="text" id="plaats" placeholder="Woonplaats" autocomplete="address-level2" aria-label="Plaats"></div><input type="email" id="mail" placeholder="E-mailadres" autocomplete="email" aria-label="E-mailadres"><input type="tel" id="tel" placeholder="Telefoon (niet verplicht)" autocomplete="tel" aria-label="Telefoon"><select id="plan" aria-label="Gewenste plaatsing"><option>Plaatsing in overleg</option><option>Zo snel mogelijk</option><option>Binnen 2 weken</option><option>Binnen drie maanden</option></select><div class="sitfoto"><label for="fotos" class="sitlbl">Foto's van de situatie <span>(niet verplicht, max. 4)</span></label><p class="sitnote">Maak een paar foto's van de plek waar de schutting komt, of van je oude schutting. Zo kunnen we je sneller een vaste prijs geven.</p><label class="sitbtn" for="fotos">📷 Foto's kiezen of maken</label><input type="file" id="fotos" accept="image/*" multiple hidden><div class="sitprev" id="sitprev"></div></div></div>
       <button class="btn" type="submit">Offerte aanvragen</button>
       <p class="note wanote">Na het versturen opent WhatsApp met je offerte erin. Tik daar op verzenden, dan hebben wij hem ook direct op WhatsApp.</p>
       <p class="note" id="err" style="color:#C0392B;margin:10px 0 0;display:none">Vul je naam, e-mailadres en postcode in.</p></form>
@@ -556,6 +557,15 @@ if(new URLSearchParams(location.search).get('gate')==='1'){el('gate').value='1';
 function cname(k){return {teak:'Teak',oak:'Eiken',walnut:'Walnoot',grey:'Grijs',black:'Antraciet'}[k]}
 function sync(s){var r=document.documentElement;r.style.setProperty('--c',colors[s.color]);r.setAttribute('data-o',s.dir);var t=document.getElementById('tag');if(t)t.textContent=cname(s.color)+', '+(s.dir==='h'?'horizontale':'verticale')+' planken'}
 document.querySelectorAll('.tile').forEach(function(t){t.addEventListener('click',function(){el('color').value=t.dataset.k;update();syncExample();location.hash='offerte'})});
+var SIT=[];
+(function(){var inp=document.getElementById('fotos');if(!inp)return;
+ function show(){var pv=document.getElementById('sitprev');pv.innerHTML='';SIT.forEach(function(f,i){var d=document.createElement('div');d.className='sitth';var im=document.createElement('img');im.src=URL.createObjectURL(f);im.alt='Situatiefoto '+(i+1);var x=document.createElement('button');x.type='button';x.textContent='×';x.setAttribute('aria-label','Foto verwijderen');x.onclick=function(){SIT.splice(i,1);show()};d.append(im,x);pv.append(d)})}
+ inp.addEventListener('change',function(){Array.from(inp.files||[]).forEach(function(f){if(SIT.length<4&&/^image\//.test(f.type))SIT.push(f)});inp.value='';show()});})();
+function loadImg(f){return new Promise(function(res,rej){var i=new Image();i.onload=function(){res(i)};i.onerror=rej;i.src=URL.createObjectURL(f)})}
+async function collage(files){if(!files.length)return null;var imgs=[];for(var k=0;k<files.length;k++){try{imgs.push(await loadImg(files[k]))}catch(e){}}if(!imgs.length)return null;
+ var n=imgs.length,cols=n===1?1:2,rows=Math.ceil(n/cols),cw=n===1?1600:900,ch=n===1?1200:675,c=document.createElement('canvas');c.width=cols*cw+(cols-1)*8;c.height=rows*ch+(rows-1)*8;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
+ imgs.forEach(function(im,i){var r=Math.max(cw/im.width,ch/im.height),w=im.width*r,h=im.height*r,ox=(i%cols)*(cw+8),oy=Math.floor(i/cols)*(ch+8);x.save();x.beginPath();x.rect(ox,oy,cw,ch);x.clip();x.drawImage(im,ox+(cw-w)/2,oy+(ch-h)/2,w,h);x.restore()});
+ return await new Promise(function(r){c.toBlob(r,'image/jpeg',0.82)})}
 function waBtn(u,l){var a=document.createElement('a');a.className='btn wabtn';a.href=u;a.target='_blank';a.rel='noopener';a.textContent=l;return a}
 // Offerteaanvragen gaan via FormSubmit (formsubmit.co) naar dit adres:
 var FORM_EMAIL='2b89cc8d17fdd2b307c2dc297c094dd2';
@@ -571,10 +581,12 @@ document.getElementById('form').addEventListener('submit',function(e){e.preventD
  var wa='https://wa.me/31641071486?text='+encodeURIComponent(wt);
  try{window.open(wa,'_blank','noopener')}catch(x){}
  if(btn){btn.disabled=true;btn.dataset.t=btn.textContent;btn.textContent='Bezig met versturen…'}
- fetch('https://formsubmit.co/ajax/'+FORM_EMAIL,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)})
- .then(function(r){return r.json().then(function(j){if(!r.ok||String(j.success)!=='true')throw 0})})
+ data["Situatiefoto's"]=SIT.length?SIT.length+' foto(\'s), zie bijlage':'Geen';
+ var sendJson=function(){return fetch('https://formsubmit.co/ajax/'+FORM_EMAIL,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)}).then(function(r){return r.json().then(function(j){if(!r.ok||String(j.success)!=='true')throw 0})})};
+ (SIT.length?collage(SIT).then(function(bl){if(!bl)return sendJson();var fd=new FormData();Object.keys(data).forEach(function(k){fd.append(k,data[k])});fd.append('attachment',bl,'situatie-'+n.replace(/\W+/g,'-')+'.jpg');
+   return fetch('https://formsubmit.co/ajax/'+FORM_EMAIL,{method:'POST',headers:{Accept:'application/json'},body:fd}).then(function(r){return r.json().then(function(j){if(!r.ok||String(j.success)!=='true')throw 0})}).catch(function(){data["Situatiefoto's"]='Foto\'s konden niet mee; vraag de klant ze via WhatsApp te sturen';return sendJson()})}):sendJson())
  .then(function(){f.style.display='none';var o=el('ok');o.style.display='block';
-  o.innerHTML='';var t=document.createElement('p');t.style.margin='0 0 14px';t.textContent='Bedankt, '+n+'! We hebben je aanvraag voor '+ontwerp+' (indicatief '+el('price').textContent+' incl. plaatsing) ontvangen en nemen snel contact met je op via '+m+'.';o.append(t,waBtn(wa,'Stuur je offerte ook via WhatsApp'))})
+  o.innerHTML='';var t=document.createElement('p');t.style.margin='0 0 14px';t.textContent='Bedankt, '+n+'! We hebben je aanvraag voor '+ontwerp+' (indicatief '+el('price').textContent+' incl. plaatsing) ontvangen en nemen snel contact met je op via '+m+'.'+(SIT.length?' Je foto\'s zijn meegestuurd.':' Heb je foto\'s van de situatie? Stuur ze gerust via WhatsApp.');o.append(t,waBtn(wa,'Stuur je offerte ook via WhatsApp'))})
  .catch(function(){err.innerHTML='';var t=document.createElement('span');t.textContent='Versturen per e-mail is niet gelukt. Stuur je offerte via WhatsApp, dan ontvangen wij hem direct.';err.append(t,document.createElement('br'),waBtn(wa,'Offerte via WhatsApp sturen'));err.style.display='block'})
  .finally(function(){if(btn){btn.disabled=false;btn.textContent=btn.dataset.t}})});
 
