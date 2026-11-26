@@ -291,6 +291,15 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
 .pbar.cprice strong{font:800 1.9rem var(--d);color:#E2BE8C;letter-spacing:.01em}
 .cardimg .tag2{bottom:62px}.cardimg::after{bottom:62px}
 .wanote{margin:10px 0 0;font-size:.88rem}.btn.wabtn{background:#25D366;color:#fff;margin-top:10px;display:inline-block}.btn.wabtn:hover{filter:brightness(.95)}
+
+/* nette prijsbalk */
+.pbar.cprice{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:11px 16px 12px;background:#1C1816;border-top:0;box-shadow:inset 0 2px 0 #C49A62;line-height:1;text-align:left}
+.pbar.cprice .pp{display:flex;align-items:baseline;gap:7px}
+.pbar.cprice small{font:600 .72rem var(--b);letter-spacing:.12em;text-transform:uppercase;color:#B9A98F}
+.pbar.cprice strong{font:800 1.55rem var(--d);color:#E2BE8C;letter-spacing:0}
+.pbar.cprice em{font:500 .85rem var(--b);font-style:normal;color:#D8CBB8}
+.pbar.cprice .pm{font:500 .78rem var(--b);color:#B9A98F;white-space:nowrap}
+.cardimg::after{content:"";width:34px;height:34px;padding:0;right:10px;top:10px;bottom:auto;border-radius:50%;background:rgba(247,244,238,.92) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231C1816' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6'/%3E%3Cpath d='M15 15l5 5M10.5 8v5M8 10.5h5'/%3E%3C/svg%3E") center/18px no-repeat}
 </style>
 </head>
 <body>
@@ -594,7 +603,7 @@ function card(e){var s=e[0],l=e[1],d=e[3],pr=eur0(d==='h'?P.horizontaal:P.vertic
  var look={teak:'Warme houtlook',oak:'Lichte, natuurlijke houtlook',walnut:'Diepe, donkere houtlook',grey:'Rustige, tijdloze uitstraling',black:'Moderne, donkere uitstraling'}[e[2]];
  var desc=look+(e[4]==='grain'?' met een natuurlijke houtnerf op brede '+(d==='h'?'horizontale':'verticale')+' planken.':' met een strak '+rt+' reliëf.');
  var a=document.createElement('article');a.className='card';a.dataset.d=d;
- a.innerHTML='<button type="button" class="cardimg"><img src="'+IMGF[s]+'" alt="Composiet schutting '+l+'" loading="lazy"><span class="tag2">'+(d==='h'?'Horizontaal':'Verticaal')+'</span><span class="pbar cprice"><small>Vanaf</small><strong>'+pr+'</strong><small>per meter</small></span></button><div class="cardbody"><div class="chead"><div><p class="ckick">'+prof+' • '+rt+'</p><h3>'+kl+' '+prof+'</h3></div></div><p class="cdesc">'+desc+'</p><p class="cmeta">Met zwarte aluminium palen · incl. montage</p><button type="button" class="btn cbtn">Stel jouw schutting samen →</button></div>';
+ a.innerHTML='<button type="button" class="cardimg"><img src="'+IMGF[s]+'" alt="Composiet schutting '+l+'" loading="lazy"><span class="pbar cprice"><span class="pp"><small>Vanaf</small><strong>'+pr+'</strong><em>per meter</em></span><span class="pm">incl. montage</span></span></button><div class="cardbody"><div class="chead"><div><p class="ckick">'+prof+' • '+rt+'</p><h3>'+kl+' '+prof+'</h3></div></div><p class="cdesc">'+desc+'</p><p class="cmeta">Met zwarte aluminium palen · incl. montage</p><button type="button" class="btn cbtn">Stel jouw schutting samen →</button></div>';
  a.querySelector('.btn').addEventListener('click',function(){setExample(e);location.hash='offerte'});
  a.querySelector('.cardimg').addEventListener('click',function(){openLb(IMGF[s],l,e)});return a}
 function openLb(src,l,e){var o=document.getElementById('lb');if(!o){o=document.createElement('div');o.id='lb';o.innerHTML='<div class="lbin"><button type="button" class="lbx" aria-label="Sluiten">×</button><img alt=""><div class="lbcap"></div><button type="button" class="btn lbgo">Stel jouw schutting samen</button></div>';document.body.appendChild(o);
