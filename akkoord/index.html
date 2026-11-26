@@ -92,7 +92,10 @@ input[type=text],input[type=date]{font:inherit;color:var(--ink);background:var(-
 <section class="card done" id="done" hidden>
   <div class="big">✅</div>
   <h2 style="margin-top:10px">Bedankt voor je akkoord!</h2>
-  <p id="doneTxt">We hebben je akkoordverklaring ontvangen en nemen snel contact met je op over de planning.</p>
+  <p id="doneTxt">We hebben je akkoordverklaring ontvangen en nemen snel contact met je op over de planning. Hieronder staat je ondertekende kopie.</p>
+  <img id="kopie" alt="Je ondertekende akkoordverklaring" style="width:100%;border:1px solid var(--line);border-radius:10px;margin-top:14px">
+  <button class="btn" type="button" id="bewaar">Bewaar je akkoordverklaring</button>
+  <p class="note" id="bewaarTip" style="margin-top:8px">Tip: lukt bewaren niet? Houd je vinger op de afbeelding hierboven en kies "Bewaar in Foto's".</p>
   <a class="btn wa" id="waBtn" target="_blank" rel="noopener">Bevestig ook via WhatsApp</a>
 </section>
 </div></main>
@@ -148,7 +151,11 @@ $('#f').addEventListener('submit',async ev=>{
   if(!ok){try{data.Handtekening='Getekend op het scherm (bijlage kon niet mee)';const r=await fetch('https://formsubmit.co/ajax/'+KEY,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)});const j=await r.json().catch(()=>({}));ok=r.ok&&String(j.success)==='true'}catch(e){}}
   const msg='Hallo De Composiet Specialist, ik ga akkoord met de offerte'+(get('nr')?' '+get('nr'):'')+' ('+(prijs?eur(prijs):'volgens offerte')+') en heb de akkoordverklaring ondertekend op '+tijd+'.\n\nNaam: '+naam;
   $('#waBtn').href='https://wa.me/'+WA+'?text='+encodeURIComponent(msg);
-  if(ok){$('#form-wrap').hidden=true;$('#done').hidden=false;scrollTo(0,0)}
+  if(ok){
+    if(blob){const url=URL.createObjectURL(blob),fn='akkoordverklaring-'+naam.replace(/\W+/g,'-')+'.png',file=new File([blob],fn,{type:'image/png'});$('#kopie').src=url;
+      $('#bewaar').onclick=async()=>{if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Akkoordverklaring De Composiet Specialist'})}catch(e){}}else{const a=document.createElement('a');a.href=url;a.download=fn;document.body.append(a);a.click();a.remove()}}}
+    else{$('#kopie').hidden=true;$('#bewaar').hidden=true;$('#bewaarTip').hidden=true}
+    $('#form-wrap').hidden=true;$('#done').hidden=false;scrollTo(0,0)}
   else{btn.disabled=false;btn.textContent='Akkoord en ondertekenen';fail('Versturen lukte niet. Probeer het opnieuw, of bevestig via WhatsApp.');const a=document.createElement('a');a.className='btn wa';a.href=$('#waBtn').href;a.target='_blank';a.rel='noopener';a.textContent='Akkoord via WhatsApp sturen';$('#err').after(a)}
 });
 </script>
