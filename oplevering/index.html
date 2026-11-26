@@ -4,166 +4,346 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1C1816">
 <title>Opleverformulier | De Composiet Specialist</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F7F4EE;--surface:#fff;--ink:#1C1816;--muted:#6B6258;--line:#DDD3C4;--brown:#8A6238;--gold:#C49A62;--ok:#2E7D4F;--err:#B3261E;
+:root{--bg:#F7F4EE;--surface:#fff;--ink:#1C1816;--muted:#6B6258;--line:#DDD3C4;--brown:#8A6238;--gold:#C49A62;--ok:#2E7D4F;--okbg:#E5F2EA;--bad:#B3261E;--badbg:#FBE7E5;--na:#8E8478;
 --d:"Barlow Condensed","Arial Narrow",sans-serif;--b:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
 *{box-sizing:border-box}[hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.55 var(--b)}
-.top{background:linear-gradient(180deg,#2B241D,#17130F);color:#F1E9DB;padding:22px 16px 28px}
-.w{max-width:720px;margin:0 auto}
-.top small{letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700;font-size:.75rem}
-h1{font:800 2.3rem/1.02 var(--d);text-transform:uppercase;margin:6px 0 8px}
-.top p{margin:0;color:#D8CBB8}
-main{padding:0 16px 40px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:18px}
-h2{font:800 1.45rem/1.1 var(--d);text-transform:uppercase;margin:0 0 10px}
-dl{margin:0;display:grid;gap:8px}dl div{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}dl div:last-child{border-bottom:0}
-dt{color:var(--muted);font-size:.92rem}dd{margin:0;font-weight:600;overflow-wrap:anywhere}
-.total{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:12px;padding-top:12px;border-top:2px solid var(--ink)}
-.total strong{font:800 2.1rem var(--d)}
-ul.terms{margin:0;padding-left:20px}ul.terms li{margin:6px 0}
-label.f{display:grid;gap:6px;font-weight:600;margin-top:12px}
-input[type=text],input[type=date]{font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px;width:100%}
-.chk{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-weight:500}.chk input{width:22px;height:22px;margin-top:1px;accent-color:var(--brown);flex:none}
-.sig{margin-top:12px;border:2px dashed var(--line);border-radius:12px;background:#FFFDF9;position:relative}
-.sig canvas{display:block;width:100%;height:190px;touch-action:none;cursor:crosshair;border-radius:10px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.5 var(--b);padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.top{background:linear-gradient(180deg,#2B241D,#17130F);color:#F1E9DB;padding:calc(16px + env(safe-area-inset-top,0px)) 16px 18px;position:sticky;top:0;z-index:20}
+.w{max-width:760px;margin:0 auto}
+.top small{letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700;font-size:.72rem}
+.top h1{font:800 1.7rem/1 var(--d);text-transform:uppercase;margin:4px 0 10px}
+.steps{display:flex;gap:4px}.steps button{flex:1;border:0;background:rgba(255,255,255,.12);color:#D8CBB8;font:600 .72rem var(--b);padding:7px 2px;border-radius:8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.steps button.on{background:var(--gold);color:#1C1816;flex:3}@media(max-width:600px){.steps button:not(.on) span{display:none}}.steps button.done{background:rgba(196,154,98,.35);color:#F1E9DB}
+main{padding:0 16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+h2{font:800 1.5rem/1.1 var(--d);text-transform:uppercase;margin:0 0 4px}
+h3{font:800 1.15rem/1.1 var(--d);text-transform:uppercase;margin:0 0 6px;color:var(--brown)}
+.sub{color:var(--muted);font-size:.92rem;margin:0 0 10px}
+label.f{display:grid;gap:5px;font-weight:600;font-size:.92rem;margin-top:10px;min-width:0}
+input[type=text],input[type=date],input[type=number],input[type=tel],select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;width:100%;min-width:0}
+textarea{min-height:80px;resize:vertical}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 10px}
+@media(max-width:480px){.g3{grid-template-columns:1fr 1fr}}
+.ci{padding:12px 0;border-bottom:1px solid var(--line)}.ci:last-child{border-bottom:0}
+.ci .t{font-weight:600;margin-bottom:8px}
+.tri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.tri label{position:relative}.tri input{position:absolute;opacity:0}
+.tri span{display:block;text-align:center;padding:9px 4px;border:1.5px solid var(--line);border-radius:10px;font-weight:700;font-size:.88rem;background:var(--bg);cursor:pointer}
+.tri input:checked+span.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.tri input:checked+span.bad{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.tri input:checked+span.na{background:#EEE9E1;border-color:var(--na);color:var(--na)}
+.tri input:focus-visible+span{outline:3px solid var(--gold);outline-offset:2px}
+.ci textarea{margin-top:8px;min-height:60px}
+.sum{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.pill{border-radius:999px;padding:5px 12px;font-weight:700;font-size:.85rem}
+.pill.ok{background:var(--okbg);color:var(--ok)}.pill.bad{background:var(--badbg);color:var(--bad)}.pill.na{background:#EEE9E1;color:var(--na)}
+.allok{border:1.5px solid var(--ok);color:var(--ok);background:var(--okbg);border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer;margin-bottom:6px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.seg label{position:relative}.seg input{position:absolute;opacity:0}
+.seg span{display:block;text-align:center;padding:11px;border:1.5px solid var(--line);border-radius:12px;font-weight:600;background:var(--bg);cursor:pointer}
+.seg input:checked+span{border-color:var(--brown);background:#F3E6D2}.seg input:focus-visible+span{outline:3px solid var(--gold)}
+.rp{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px}.rp input[type=text]{grid-column:1}.rp button{grid-row:1/3;grid-column:2;align-self:start}
+.mini{border:0;background:var(--badbg);color:var(--bad);width:38px;height:38px;border-radius:10px;font-size:1.2rem;cursor:pointer}
+.add{border:1.5px dashed var(--gold);background:#FBF6EE;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer;margin-top:10px}
+.photo{display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border:1.5px dashed var(--gold);border-radius:12px;background:#FBF6EE;font-weight:600;cursor:pointer;margin-top:6px}
+.prev{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.th{position:relative;width:80px;height:80px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.th img{width:100%;height:100%;object-fit:cover;display:block}.th button{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(28,24,22,.8);color:#fff;padding:0;cursor:pointer}
+.stars{display:flex;gap:6px;margin-top:6px}.stars button{border:0;background:none;font-size:2.1rem;line-height:1;color:#D9CDB8;cursor:pointer;padding:0 2px}.stars button.on{color:var(--gold)}
+.sig{margin-top:8px;border:2px dashed var(--line);border-radius:12px;background:#FFFDF9;position:relative}
+.sig canvas{display:block;width:100%;height:170px;touch-action:none;cursor:crosshair;border-radius:10px}
 .sig .ph{position:absolute;inset:0;display:grid;place-items:center;color:#B9AC98;pointer-events:none;font-weight:600}
-.sigbar{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:.88rem;color:var(--muted)}
+.sigbar{display:flex;justify-content:space-between;align-items:center;margin-top:4px;font-size:.86rem;color:var(--muted)}
 .link{background:none;border:0;color:var(--brown);font:600 .9rem var(--b);cursor:pointer;padding:4px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:15px 24px;font:700 1.05rem var(--b);cursor:pointer;background:linear-gradient(135deg,#D6B283,#B38450);color:#1C1816;text-decoration:none;width:100%;margin-top:18px}
-.btn:disabled{opacity:.6;cursor:wait}.btn.wa{background:#25D366;color:#fff}
-.err{color:var(--err);font-weight:600;margin:10px 0 0}
-.done{text-align:center}.done .big{font-size:3rem;line-height:1}
-.note{color:var(--muted);font-size:.88rem}
+.chk{display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-weight:500}.chk input{width:22px;height:22px;accent-color:var(--brown);flex:none;margin-top:1px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(247,244,238,.97);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));z-index:30}
+.bar .w{display:flex;gap:10px}
+.btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:14px 18px;font:700 1rem var(--b);cursor:pointer;background:linear-gradient(135deg,#D6B283,#B38450);color:#1C1816;text-decoration:none}
+.btn.ghost{background:transparent;box-shadow:inset 0 0 0 1.5px var(--line);color:var(--ink);flex:0 0 auto}
+.btn.wa{background:#25D366;color:#fff}.btn:disabled{opacity:.6;cursor:wait}
+.err{color:var(--bad);font-weight:600;margin:10px 0 0}
+.draft{font-size:.82rem;color:var(--muted);margin-top:8px;display:flex;justify-content:space-between;gap:8px}
+.done{text-align:center}.done .big{font-size:3rem}.done .btn{width:100%;margin-top:10px}
+.rapport{width:100%;border-radius:10px;border:1px solid var(--line);margin-top:12px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.92rem}.kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:600;overflow-wrap:anywhere}
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-@media(max-width:480px){dl div{grid-template-columns:1fr;gap:2px}}
-.cl{list-style:none;margin:0;padding:0;display:grid;gap:2px}.cl li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}.cl li:last-child{border-bottom:0}
-.cl label{display:flex;gap:10px;align-items:flex-start;flex:1;font-weight:500;cursor:pointer}.cl input{width:22px;height:22px;accent-color:var(--brown);flex:none;margin-top:1px}
-textarea{font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px;width:100%;min-height:90px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:480px){.grid2{grid-template-columns:1fr}}
-.sitbtn{display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border:1.5px dashed #C49A62;border-radius:12px;background:#FBF6EE;font-weight:600;cursor:pointer;margin-top:8px}
-.sitprev{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.sitth{position:relative;width:76px;height:76px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}.sitth img{width:100%;height:100%;object-fit:cover;display:block}.sitth button{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(28,24,22,.8);color:#fff;line-height:24px;padding:0;cursor:pointer}
-.seg{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.seg label{flex:1;min-width:140px}.seg input{position:absolute;opacity:0}.seg span{display:block;text-align:center;padding:12px;border:1.5px solid var(--line);border-radius:12px;font-weight:600;background:var(--bg)}.seg input:checked+span{border-color:var(--brown);background:#F3E6D2}.seg input:focus-visible+span{outline:3px solid var(--gold)}
 </style>
 </head>
 <body>
 <header class="top"><div class="w">
   <small>De Composiet Specialist</small>
   <h1>Opleverformulier</h1>
-  <p>Controle na plaatsing. Loop alles samen met de klant na, maak foto's en laat de klant tekenen.</p>
+  <nav class="steps" id="steps" aria-label="Stappen"></nav>
 </div></header>
+
 <main><div class="w">
 <form id="f" novalidate>
-<section class="card">
-  <h2>Klus</h2>
-  <label class="f">Naam klant<input type="text" id="naam" autocomplete="off"></label>
-  <label class="f">Adres<input type="text" id="adres" autocomplete="off"></label>
-  <div class="grid2"><label class="f">Telefoon klant<input type="text" id="tel" inputmode="tel" autocomplete="off"></label><label class="f">Datum oplevering<input type="date" id="datum"></label></div>
-  <label class="f">Geplaatst<input type="text" id="ontwerp" placeholder="Bijv. 12 m walnoot, U-vorm, 180 cm + poort"></label>
-  <div class="grid2"><label class="f">Offerte / klusnummer<input type="text" id="nr" autocomplete="off"></label><label class="f">Geplaatst door<input type="text" id="monteur" autocomplete="name"></label></div>
-</section>
 
-<section class="card">
-  <h2>Controle</h2>
-  <ul class="cl" id="cl"></ul>
-  <p class="note" id="clcount" style="margin-top:8px"></p>
-</section>
-
-<section class="card">
-  <h2>Restpunten en opmerkingen</h2>
-  <div class="seg" role="radiogroup" aria-label="Restpunten">
-    <label><input type="radio" name="rest" value="Geen restpunten" checked><span>✓ Geen restpunten</span></label>
-    <label><input type="radio" name="rest" value="Er zijn restpunten"><span>Er zijn restpunten</span></label>
+<!-- STAP 1 -->
+<section class="step" data-s="0">
+  <div class="card">
+    <h2>1. Klus</h2>
+    <p class="sub">Gegevens van de klant en de klus.</p>
+    <label class="f">Naam klant<input type="text" id="naam" autocomplete="off"></label>
+    <label class="f">Adres<input type="text" id="adres" autocomplete="off"></label>
+    <div class="g2"><label class="f">Telefoon<input type="tel" id="tel" autocomplete="off"></label><label class="f">E-mail<input type="text" id="email" inputmode="email" autocomplete="off"></label></div>
+    <div class="g2"><label class="f">Datum oplevering<input type="date" id="datum"></label><label class="f">Klusnummer<input type="text" id="nr" autocomplete="off"></label></div>
+    <div class="g2"><label class="f">Geplaatst door<input type="text" id="monteur"></label><label class="f">Aantal uur<input type="number" id="uren" inputmode="decimal" step="0.5" min="0"></label></div>
   </div>
-  <label class="f">Opmerkingen<textarea id="opm" placeholder="Bijv. poortslot wordt nagestuurd en vrijdag geplaatst"></textarea></label>
+  <div class="card">
+    <h3>Wat is er geplaatst</h3>
+    <div class="g3">
+      <label class="f">Lengte (m)<input type="number" id="lengte" inputmode="decimal" step="0.1" min="0"></label>
+      <label class="f">Hoogte<select id="hoogte"><option value="">–</option><option>90 cm</option><option>100 cm</option><option>120 cm</option><option>150 cm</option><option>180 cm</option><option>200 cm</option></select></label>
+      <label class="f">Aantal palen<input type="number" id="palen" inputmode="numeric" min="0"></label>
+      <label class="f">Kleur<select id="kleur"><option value="">–</option><option>Teak</option><option>Eiken</option><option>Walnoot</option><option>Grijs</option><option>Antraciet</option></select></label>
+      <label class="f">Profiel<select id="profiel"><option value="">–</option><option>Rhombus</option><option>Houtnerf</option></select></label>
+      <label class="f">Richting<select id="richting"><option value="">–</option><option>Horizontaal</option><option>Verticaal</option></select></label>
+      <label class="f">Onderprofiel<select id="onderprofiel"><option value="">–</option><option>3 cm</option><option>9 cm</option><option>25 cm</option></select></label>
+      <label class="f">Poort<select id="poort"><option value="">Geen</option><option>Enkel 90 cm alu</option><option>Enkel 100 cm ijzer</option><option>Enkel 125 cm ijzer</option><option>Dubbel 250 cm ijzer</option><option>Dubbel 300 cm ijzer</option></select></label>
+      <label class="f">Zakken snelbeton<input type="number" id="beton" inputmode="numeric" min="0"></label>
+    </div>
+    <label class="f">Omschrijving (optioneel)<input type="text" id="ontwerp" placeholder="Bijv. U-vorm langs achtertuin"></label>
+  </div>
 </section>
 
-<section class="card">
-  <h2>Foto's na plaatsing</h2>
-  <p class="note" style="margin:0">Maak foto's van het eindresultaat (max. 4).</p>
-  <label class="sitbtn" for="fotos">📷 Foto's maken of kiezen</label><input type="file" id="fotos" accept="image/*" multiple hidden>
-  <div class="sitprev" id="prev"></div>
+<!-- STAP 2 -->
+<section class="step" data-s="1" hidden>
+  <div class="card">
+    <h2>2. Controle</h2>
+    <p class="sub">Loop alles na. Kies per punt <b>OK</b>, <b>Niet OK</b> of <b>N.v.t.</b> Bij "Niet OK" vul je in wat er aan de hand is.</p>
+    <button type="button" class="allok" id="allok">✓ Alles nog niet ingevulde op OK zetten</button>
+    <div id="checks"></div>
+    <div class="sum" id="sum"></div>
+  </div>
 </section>
 
-<section class="card">
-  <h2>Akkoord klant</h2>
-  <label class="chk"><input type="checkbox" id="ok"> De klant heeft het werk samen met ons nagelopen en verklaart dat het is opgeleverd zoals hierboven beschreven.</label>
-  <label class="f" style="margin-top:16px">Handtekening klant</label>
-  <div class="sig"><canvas id="pad" aria-label="Handtekening klant"></canvas><div class="ph" id="ph">Klant tekent hier met de vinger</div></div>
-  <div class="sigbar"><span>Teken in het vak hierboven</span><button type="button" class="link" id="clear">Wissen</button></div>
-  <p class="err" id="err" role="alert" hidden></p>
-  <button class="btn" type="submit" id="send">Oplevering versturen</button>
-  <p class="note" style="margin-top:12px">Het opleverrapport met foto's en handtekening gaat naar info@decomposietspecialist.nl.</p>
+<!-- STAP 3 -->
+<section class="step" data-s="2" hidden>
+  <div class="card">
+    <h2>3. Meerwerk en restpunten</h2>
+    <h3 style="margin-top:8px">Meerwerk</h3>
+    <div class="seg"><label><input type="radio" name="meer" value="Nee" checked><span>Geen meerwerk</span></label><label><input type="radio" name="meer" value="Ja"><span>Wel meerwerk</span></label></div>
+    <div id="meerbox" hidden>
+      <label class="f">Omschrijving meerwerk<textarea id="meeromschr" placeholder="Bijv. extra paal door leiding in de grond, 2 m extra schutting"></textarea></label>
+      <div class="g2"><label class="f">Bedrag (incl. btw)<input type="number" id="meerbedrag" inputmode="decimal" step="0.01" min="0"></label><label class="f">Akkoord klant<select id="meerakk"><option>Ja, besproken en akkoord</option><option>Nog bespreken</option></select></label></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Restpunten</h3>
+    <p class="sub">Wat moet er nog gebeuren?</p>
+    <div id="rps"></div>
+    <button type="button" class="add" id="addrp">+ Restpunt toevoegen</button>
+    <label class="f" style="margin-top:14px">Overige opmerkingen<textarea id="opm" placeholder="Bijv. buren akkoord met plaatsing op erfgrens"></textarea></label>
+  </div>
 </section>
+
+<!-- STAP 4 -->
+<section class="step" data-s="3" hidden>
+  <div class="card">
+    <h2>4. Foto's</h2>
+    <h3 style="margin-top:8px">Vóór (oude situatie)</h3>
+    <label class="photo" for="fvoor">📷 Foto's vóór</label><input type="file" id="fvoor" accept="image/*" multiple hidden>
+    <div class="prev" id="pvoor"></div>
+    <h3 style="margin-top:16px">Na (eindresultaat)</h3>
+    <label class="photo" for="fna">📷 Foto's na</label><input type="file" id="fna" accept="image/*" multiple hidden>
+    <div class="prev" id="pna"></div>
+    <p class="sub" style="margin-top:10px">Max. 4 per soort. Ze komen in het opleverrapport.</p>
+  </div>
+</section>
+
+<!-- STAP 5 -->
+<section class="step" data-s="4" hidden>
+  <div class="card">
+    <h2>5. Betaling</h2>
+    <div class="g2">
+      <label class="f">Totaalbedrag opdracht<input type="number" id="totaal" inputmode="decimal" step="0.01" min="0"></label>
+      <label class="f">Aanbetaald<input type="number" id="aanbetaald" inputmode="decimal" step="0.01" min="0"></label>
+    </div>
+    <p class="sub" id="restbed" style="margin-top:8px"></p>
+    <div class="g2">
+      <label class="f">Restbedrag<select id="betstatus"><option>Factuur volgt</option><option>Betaald (pin)</option><option>Betaald (Tikkie/overboeking)</option><option>Betaald (contant)</option></select></label>
+      <label class="f">Betaaltermijn<select id="termijn"><option>14 dagen</option><option>7 dagen</option><option>Direct</option></select></label>
+    </div>
+  </div>
+</section>
+
+<!-- STAP 6 -->
+<section class="step" data-s="5" hidden>
+  <div class="card">
+    <h2>6. Afronden</h2>
+    <h3 style="margin-top:8px">Tevredenheid klant</h3>
+    <p class="sub">Vraag de klant hoe tevreden hij is.</p>
+    <div class="stars" id="stars" role="radiogroup" aria-label="Tevredenheid"></div>
+    <label class="f">Reactie klant (optioneel)<textarea id="reactie" placeholder="Wat vond de klant ervan?"></textarea></label>
+    <label class="chk"><input type="checkbox" id="reviewok"> Klant vindt het goed dat we hem om een Google-review vragen.</label>
+  </div>
+  <div class="card">
+    <h3>Overzicht</h3>
+    <dl class="kv" id="overzicht"></dl>
+  </div>
+  <div class="card">
+    <h3>Handtekening klant</h3>
+    <label class="chk"><input type="checkbox" id="ok"> De klant heeft het werk samen met ons nagelopen en verklaart dat het is opgeleverd zoals in dit formulier staat, met eventuele restpunten.</label>
+    <div class="sig"><canvas id="padK" aria-label="Handtekening klant"></canvas><div class="ph">Klant tekent hier</div></div>
+    <div class="sigbar"><span>Klant</span><button type="button" class="link" data-clear="padK">Wissen</button></div>
+    <h3 style="margin-top:14px">Handtekening monteur</h3>
+    <div class="sig"><canvas id="padM" aria-label="Handtekening monteur"></canvas><div class="ph">Monteur tekent hier</div></div>
+    <div class="sigbar"><span>Monteur</span><button type="button" class="link" data-clear="padM">Wissen</button></div>
+    <p class="err" id="err" role="alert" hidden></p>
+  </div>
+</section>
+
+<div class="draft"><span id="draftinfo">Wordt tussentijds op deze telefoon bewaard.</span><button type="button" class="link" id="wis">Formulier leegmaken</button></div>
 </form>
 
 <section class="card done" id="done" hidden>
   <div class="big">✅</div>
-  <h2 style="margin-top:10px">Oplevering verstuurd</h2>
-  <p id="doneTxt">Het opleverrapport staat in je mail. Vergeet niet de restfactuur te sturen en de status in je dashboard op "Geplaatst" te zetten.</p>
-  <a class="btn wa" id="waKlant" target="_blank" rel="noopener" hidden>Bevestiging naar klant via WhatsApp</a>
-  <a class="btn" id="again" href="">Nieuw opleverformulier</a>
+  <h2 style="margin-top:6px">Oplevering verstuurd</h2>
+  <p class="sub" id="donetxt">Het opleverrapport staat in je mail (info@decomposietspecialist.nl).</p>
+  <img class="rapport" id="rapportimg" alt="Opleverrapport">
+  <button class="btn" type="button" id="share">Rapport delen met klant</button>
+  <a class="btn wa" id="waKlant" target="_blank" rel="noopener" hidden>Bedankje via WhatsApp</a>
+  <a class="btn ghost" style="width:100%" href="./">Nieuw opleverformulier</a>
+  <p class="sub" style="margin-top:12px">Vergeet niet in je dashboard de status op <b>Geplaatst</b> te zetten.</p>
 </section>
 </div></main>
 
+<div class="bar" id="bar"><div class="w">
+  <button class="btn ghost" type="button" id="prev">← Terug</button>
+  <button class="btn" type="button" id="next">Volgende →</button>
+</div></div>
+
 <script>
-const KEY='2b89cc8d17fdd2b307c2dc297c094dd2';
-const q=new URLSearchParams(location.search),$=s=>document.querySelector(s),get=k=>(q.get(k)||'').trim();
-['naam','adres','tel','ontwerp','nr'].forEach(k=>{if(get(k))$('#'+k).value=get(k)});
-$('#datum').value=new Date().toISOString().slice(0,10);
-try{const m=localStorage.getItem('dcs_monteur');if(m)$('#monteur').value=m}catch(e){}
-$('#again').href=location.pathname;
-const CHECK=['Palen staan recht, waterpas en stevig in het (snel)beton','Planken zitten goed in de palen, zonder kieren of schade','Schutting heeft de afgesproken lengte, hoogte, kleur en richting','Onderprofiel is geplaatst zoals afgesproken','Kapjes op alle palen','Poort hangt recht, opent en sluit goed, slot werkt','Oude schutting gesloopt (indien afgesproken)','Afval afgevoerd en werkplek opgeruimd','Klant heeft uitleg gekregen over onderhoud (af en toe afspoelen)'];
-$('#cl').innerHTML=CHECK.map((t,i)=>'<li><label><input type="checkbox" data-i="'+i+'"> '+t+'</label></li>').join('');
-function cnt(){const n=document.querySelectorAll('#cl input:checked').length;$('#clcount').textContent=n+' van '+CHECK.length+' punten afgevinkt'}cnt();$('#cl').addEventListener('change',cnt);
-// foto's
-let FOTO=[];const inp=$('#fotos');
-function show(){const pv=$('#prev');pv.innerHTML='';FOTO.forEach((f,i)=>{const d=document.createElement('div');d.className='sitth';const im=document.createElement('img');im.src=URL.createObjectURL(f);im.alt='Foto '+(i+1);const x=document.createElement('button');x.type='button';x.textContent='×';x.setAttribute('aria-label','Foto verwijderen');x.onclick=()=>{FOTO.splice(i,1);show()};d.append(im,x);pv.append(d)})}
-inp.addEventListener('change',()=>{[...inp.files].forEach(f=>{if(FOTO.length<4&&/^image\//.test(f.type))FOTO.push(f)});inp.value='';show()});
-// handtekening
-const cv=$('#pad'),ctx=cv.getContext('2d');let drawing=false,signed=false,last=null;
-function size(){const r=cv.getBoundingClientRect(),d=Math.max(1,devicePixelRatio||1);cv.width=r.width*d;cv.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);ctx.lineWidth=2.6;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#1C1816';ctx.fillStyle='#1C1816'}
-size();
-const pos=e=>{const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};
-cv.addEventListener('pointerdown',e=>{drawing=true;last=pos(e);cv.setPointerCapture(e.pointerId);ctx.beginPath();ctx.arc(last.x,last.y,1.2,0,7);ctx.fill();signed=true;$('#ph').hidden=true});
-cv.addEventListener('pointermove',e=>{if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();last=p});
-['pointerup','pointercancel','pointerleave'].forEach(t=>cv.addEventListener(t,()=>drawing=false));
-$('#clear').onclick=()=>{ctx.clearRect(0,0,cv.width,cv.height);signed=false;$('#ph').hidden=false};
-const loadImg=f=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=typeof f==='string'?f:URL.createObjectURL(f)});
-async function rapportBeeld(naam){
-  const imgs=[];for(const f of FOTO){try{imgs.push(await loadImg(f))}catch(e){}}
-  const sig=signed?await loadImg(cv.toDataURL('image/png')):null;
-  const cw=900,ch=675,g=8,cols=imgs.length>1?2:1,rows=Math.ceil(imgs.length/cols),W=imgs.length?cols*cw+(cols-1)*g:1200,sigH=sig?330:0;
-  const c=document.createElement('canvas');c.width=W;c.height=rows*ch+Math.max(0,rows-1)*g+sigH;if(!c.height)return null;
-  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
-  imgs.forEach((im,i)=>{const r=Math.max(cw/im.width,ch/im.height),w=im.width*r,h=im.height*r,ox=(i%cols)*(cw+g),oy=Math.floor(i/cols)*(ch+g);x.save();x.beginPath();x.rect(ox,oy,cw,ch);x.clip();x.drawImage(im,ox+(cw-w)/2,oy+(ch-h)/2,w,h);x.restore()});
-  if(sig){const y0=c.height-sigH;x.fillStyle='#F7F4EE';x.fillRect(0,y0,W,sigH);x.fillStyle='#1C1816';x.font='bold 30px sans-serif';x.fillText('Handtekening klant: '+naam,30,y0+50);x.font='24px sans-serif';x.fillText('Opgeleverd op '+new Date().toLocaleString('nl-NL'),30,y0+90);const r=Math.min((W-60)/sig.width,(sigH-120)/sig.height);x.drawImage(sig,30,y0+105,sig.width*r,sig.height*r)}
-  return await new Promise(r=>c.toBlob(r,'image/jpeg',0.85));
+const KEY='2b89cc8d17fdd2b307c2dc297c094dd2',STORE='dcs_oplevering_v2';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],q=new URLSearchParams(location.search);
+const STEPS=['Klus','Controle','Meerwerk','Foto\'s','Betaling','Afronden'];
+const CHECKS=[
+ ['Terrein en voorbereiding',['Leidingen/kabels vooraf nagevraagd en ontzien','Erfgrens en plaats schutting met klant gecontroleerd','Oude schutting gesloopt (indien afgesproken)']],
+ ['Palen en fundering',['Palen staan loodrecht en op gelijke hoogte','Palen stevig in het snelbeton, beton netjes afgewerkt','Paalafstand klopt, planken passen zonder spanning','Kapjes op alle palen']],
+ ['Planken en profielen',['Planken ingeschoven zonder kieren of beschadigingen','Kleur, profiel en richting volgens afspraak','Onderprofiel geplaatst volgens afspraak','Uitzetruimte gelaten (geen klemmende planken)','Bovenafwerking/afdekprofiel netjes']],
+ ['Poort',['Poort hangt recht en sluit zonder aanlopen','Scharnieren en slot werken, sleutels overhandigd','Speling onder de poort voldoende']],
+ ['Afwerking en oplevering',['Hoeken en aansluitingen netjes afgewerkt','Afval en verpakking afgevoerd, werkplek opgeruimd','Grond/bestrating rond palen hersteld','Klant uitleg gegeven over onderhoud (afspoelen, geen agressieve middelen)','Klant geïnformeerd over garantie en voorwaarden']]
+];
+let step=0,FOTO={voor:[],na:[]},stars=0;
+// ---------- stappen ----------
+$('#steps').innerHTML=STEPS.map((s,i)=>'<button type="button" data-go="'+i+'" aria-label="Stap '+(i+1)+': '+s+'">'+(i+1)+'<span>. '+s+'</span></button>').join('');
+function go(n){step=Math.max(0,Math.min(STEPS.length-1,n));$$('.step').forEach(s=>s.hidden=+s.dataset.s!==step);
+ $$('#steps button').forEach((b,i)=>{b.className=i===step?'on':(i<step?'done':'')});
+ $('#prev').style.visibility=step?'visible':'hidden';$('#next').textContent=step===STEPS.length-1?'Oplevering versturen':'Volgende →';
+ if(step===5)overzicht();setTimeout(sizeAll,30);scrollTo({top:0,behavior:'smooth'});save()}
+$('#steps').onclick=e=>{const b=e.target.closest('[data-go]');if(b)go(+b.dataset.go)};
+$('#prev').onclick=()=>go(step-1);$('#next').onclick=()=>step<STEPS.length-1?go(step+1):verstuur();
+// ---------- controlelijst ----------
+let ci=0;$('#checks').innerHTML=CHECKS.map(([g,items])=>'<h3 style="margin-top:14px">'+g+'</h3>'+items.map(t=>{const i=ci++;return '<div class="ci" data-i="'+i+'"><div class="t">'+t+'</div><div class="tri"><label><input type="radio" name="c'+i+'" value="OK"><span class="ok">OK</span></label><label><input type="radio" name="c'+i+'" value="Niet OK"><span class="bad">Niet OK</span></label><label><input type="radio" name="c'+i+'" value="N.v.t."><span class="na">N.v.t.</span></label></div><textarea id="cn'+i+'" placeholder="Wat is er niet goed en wat is de oplossing?" hidden></textarea></div>'}).join('')).join('');
+const ALL=CHECKS.flatMap(([g,it])=>it.map(t=>[g,t]));
+function upd(){let o=0,b=0,n=0,l=0;ALL.forEach((_,i)=>{const v=($('input[name=c'+i+']:checked')||{}).value;$('#cn'+i).hidden=v!=='Niet OK';if(v==='OK')o++;else if(v==='Niet OK')b++;else if(v)n++;else l++});
+ $('#sum').innerHTML='<span class="pill ok">'+o+' OK</span><span class="pill bad">'+b+' niet OK</span><span class="pill na">'+n+' n.v.t.</span>'+(l?'<span class="pill" style="background:#F3E6D2;color:var(--brown)">'+l+' nog open</span>':'')}
+$('#checks').addEventListener('change',()=>{upd();save()});
+$('#allok').onclick=()=>{ALL.forEach((_,i)=>{if(!$('input[name=c'+i+']:checked'))$('input[name=c'+i+'][value=OK]').checked=true});upd();save()};
+// ---------- meerwerk / restpunten ----------
+$$('input[name=meer]').forEach(r=>r.onchange=()=>{$('#meerbox').hidden=$('input[name=meer]:checked').value!=='Ja';save()});
+function addRp(t='',d=''){const w=document.createElement('div');w.className='rp';w.innerHTML='<input type="text" class="rpt" placeholder="Wat moet er nog gebeuren?"><input type="date" class="rpd" aria-label="Wanneer"><button type="button" class="mini" aria-label="Restpunt verwijderen">×</button>';w.querySelector('.rpt').value=t;w.querySelector('.rpd').value=d;w.querySelector('button').onclick=()=>{w.remove();save()};$('#rps').append(w)}
+$('#addrp').onclick=()=>addRp();
+// ---------- foto's ----------
+function fotoUI(k){const inp=$('#f'+k),pv=$('#p'+k);function show(){pv.innerHTML='';FOTO[k].forEach((f,i)=>{const d=document.createElement('div');d.className='th';const im=document.createElement('img');im.src=URL.createObjectURL(f);im.alt='Foto '+k+' '+(i+1);const x=document.createElement('button');x.type='button';x.textContent='×';x.setAttribute('aria-label','Foto verwijderen');x.onclick=()=>{FOTO[k].splice(i,1);show()};d.append(im,x);pv.append(d)})}
+ inp.addEventListener('change',()=>{[...inp.files].forEach(f=>{if(FOTO[k].length<4&&/^image\//.test(f.type))FOTO[k].push(f)});inp.value='';show()})}
+fotoUI('voor');fotoUI('na');
+// ---------- betaling ----------
+const eur=n=>'€ '+(+n||0).toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2});
+function rest(){const t=+$('#totaal').value||0,a=+$('#aanbetaald').value||0,m=$('input[name=meer]:checked').value==='Ja'?(+$('#meerbedrag').value||0):0;const r=t+m-a;$('#restbed').textContent=t?'Restbedrag'+(m?' (incl. meerwerk '+eur(m)+')':'')+': '+eur(r):'';return r}
+['totaal','aanbetaald','meerbedrag'].forEach(id=>$('#'+id).addEventListener('input',rest));
+// ---------- sterren ----------
+$('#stars').innerHTML=[1,2,3,4,5].map(n=>'<button type="button" role="radio" aria-label="'+n+' sterren" data-n="'+n+'">★</button>').join('');
+function paint(){$$('#stars button').forEach(b=>{b.classList.toggle('on',+b.dataset.n<=stars);b.setAttribute('aria-checked',+b.dataset.n===stars)})}
+$('#stars').onclick=e=>{const b=e.target.closest('button');if(b){stars=+b.dataset.n;paint();save()}};
+// ---------- handtekeningen ----------
+const PADS={};
+function pad(id){const cv=$('#'+id),ctx=cv.getContext('2d'),st={signed:false,drawing:false,last:null};PADS[id]={cv,ctx,st};
+ const pos=e=>{const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};
+ cv.addEventListener('pointerdown',e=>{st.drawing=true;st.last=pos(e);cv.setPointerCapture(e.pointerId);ctx.beginPath();ctx.arc(st.last.x,st.last.y,1.2,0,7);ctx.fill();st.signed=true;cv.nextElementSibling.hidden=true});
+ cv.addEventListener('pointermove',e=>{if(!st.drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(st.last.x,st.last.y);ctx.lineTo(p.x,p.y);ctx.stroke();st.last=p});
+ ['pointerup','pointercancel','pointerleave'].forEach(t=>cv.addEventListener(t,()=>st.drawing=false))}
+function sizeAll(){Object.values(PADS).forEach(({cv,ctx,st})=>{const r=cv.getBoundingClientRect();if(!r.width||st.signed&&cv.width)return;const d=Math.max(1,devicePixelRatio||1);cv.width=r.width*d;cv.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);ctx.lineWidth=2.6;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#1C1816';ctx.fillStyle='#1C1816'})}
+pad('padK');pad('padM');addEventListener('resize',sizeAll);
+$$('[data-clear]').forEach(b=>b.onclick=()=>{const p=PADS[b.dataset.clear];p.ctx.clearRect(0,0,p.cv.width,p.cv.height);p.st.signed=false;p.cv.nextElementSibling.hidden=false});
+// ---------- gegevens verzamelen ----------
+const FIELDS=['naam','adres','tel','email','datum','nr','monteur','uren','lengte','hoogte','palen','kleur','profiel','richting','onderprofiel','poort','beton','ontwerp','meeromschr','meerbedrag','meerakk','opm','totaal','aanbetaald','betstatus','termijn','reactie'];
+const v=id=>($('#'+id).value||'').trim();
+function checksData(){return ALL.map(([g,t],i)=>({g,t,v:($('input[name=c'+i+']:checked')||{}).value||'',n:v('cn'+i)}))}
+function rps(){return $$('#rps .rp').map(r=>({t:r.querySelector('.rpt').value.trim(),d:r.querySelector('.rpd').value})).filter(r=>r.t)}
+function geplaatst(){return [v('lengte')?v('lengte')+' m':'',v('hoogte'),[v('kleur'),v('profiel'),v('richting')?v('richting').toLowerCase():''].filter(Boolean).join(' '),v('poort')?'poort: '+v('poort'):'',v('onderprofiel')?'onderprofiel '+v('onderprofiel'):''].filter(Boolean).join(', ')}
+function overzicht(){const c=checksData(),bad=c.filter(x=>x.v==='Niet OK').length,open=c.filter(x=>!x.v).length,r=rps();
+ const rows=[['Klant',v('naam')],['Adres',v('adres')],['Geplaatst',geplaatst()||v('ontwerp')],['Controle',c.filter(x=>x.v==='OK').length+' OK, '+bad+' niet OK'+(open?', '+open+' open':'')],['Meerwerk',$('input[name=meer]:checked').value==='Ja'?(v('meeromschr')||'ja')+(v('meerbedrag')?' ('+eur(v('meerbedrag'))+')':''):'Geen'],['Restpunten',r.length?r.map(x=>x.t).join('; '):'Geen'],['Foto\'s',FOTO.voor.length+' vóór, '+FOTO.na.length+' na'],['Restbedrag',v('totaal')?eur(rest())+' – '+v('betstatus'):'–']].filter(x=>x[1]);
+ $('#overzicht').innerHTML=rows.map(([k,x])=>'<dt>'+k+'</dt><dd>'+x.replace(/[&<>]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[s]))+'</dd>').join('')}
+// ---------- concept bewaren ----------
+function save(){try{const d={f:Object.fromEntries(FIELDS.map(k=>[k,$('#'+k).value])),c:ALL.map((_,i)=>[($('input[name=c'+i+']:checked')||{}).value||'',$('#cn'+i).value]),meer:$('input[name=meer]:checked').value,rp:rps(),stars,review:$('#reviewok').checked,step};localStorage.setItem(STORE,JSON.stringify(d));$('#draftinfo').textContent='Tussentijds bewaard op deze telefoon ('+new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})+').'}catch(e){}}
+function load(){let d=null;try{d=JSON.parse(localStorage.getItem(STORE)||'null')}catch(e){}
+ const fromUrl=['naam','adres','tel','ontwerp','nr'].some(k=>q.get(k));
+ if(d&&(!fromUrl||d.f.naam===q.get('naam'))){Object.entries(d.f||{}).forEach(([k,x])=>{const e=$('#'+k);if(e&&x!=null)e.value=x});(d.c||[]).forEach(([x,n],i)=>{if(x){const r=$('input[name=c'+i+'][value="'+x+'"]');if(r)r.checked=true}$('#cn'+i).value=n||''});
+  if(d.meer){$('input[name=meer][value="'+d.meer+'"]').checked=true;$('#meerbox').hidden=d.meer!=='Ja'}(d.rp||[]).forEach(r=>addRp(r.t,r.d));stars=d.stars||0;$('#reviewok').checked=!!d.review}
+ else{['naam','adres','tel','ontwerp','nr'].forEach(k=>{if(q.get(k))$('#'+k).value=q.get(k)});try{$('#monteur').value=localStorage.getItem('dcs_monteur')||''}catch(e){}}
+ if(!$('#datum').value)$('#datum').value=new Date().toISOString().slice(0,10);
+ if(!$$('#rps .rp').length)addRp();paint();upd();rest()}
+document.addEventListener('input',e=>{if(e.target.closest('#f'))save()});
+$('#wis').onclick=()=>{if($('#wis').dataset.c){try{localStorage.removeItem(STORE)}catch(e){}location.href=location.pathname}else{$('#wis').dataset.c=1;$('#wis').textContent='Zeker weten? Tik nog een keer';setTimeout(()=>{delete $('#wis').dataset.c;$('#wis').textContent='Formulier leegmaken'},3000)}};
+load();go(0);
+// ---------- rapport tekenen ----------
+const img=src=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=typeof src==='string'?src:URL.createObjectURL(src)});
+function wrap(x,t,w){const out=[];String(t).split('\n').forEach(par=>{let line='';par.split(' ').forEach(wd=>{const tt=line?line+' '+wd:wd;if(x.measureText(tt).width>w&&line){out.push(line);line=wd}else line=tt});out.push(line)});return out}
+async function rapport(){
+ const W=1240,P=60,c=document.createElement('canvas'),x=c.getContext('2d');c.width=W;c.height=6000;x.fillStyle='#fff';x.fillRect(0,0,W,c.height);
+ let y=0;const H='Barlow Condensed, Arial Narrow, sans-serif',B='Figtree, Arial, sans-serif';
+ x.fillStyle='#1C1816';x.fillRect(0,0,W,170);try{const lg=await img('/apple-touch-icon.png');x.drawImage(lg,P,35,100,100)}catch(e){}
+ x.fillStyle='#C49A62';x.font='700 22px '+B;x.fillText('DE COMPOSIET SPECIALIST',P+125,70);x.fillStyle='#F1E9DB';x.font='800 56px '+H;x.fillText('OPLEVERRAPPORT',P+122,125);
+ x.font='500 22px '+B;x.fillStyle='#D8CBB8';x.textAlign='right';x.fillText(new Date(v('datum')+'T12:00').toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'}),W-P,70);if(v('nr'))x.fillText('Klus '+v('nr'),W-P,105);x.textAlign='left';y=220;
+ const sec=t=>{y+=14;x.fillStyle='#8A6238';x.font='800 34px '+H;x.fillText(t.toUpperCase(),P,y);y+=14;x.fillStyle='#DDD3C4';x.fillRect(P,y,W-2*P,2);y+=36};
+ const kv=(k,val)=>{if(!val)return;x.font='500 24px '+B;x.fillStyle='#6B6258';x.fillText(k,P,y);x.font='600 24px '+B;x.fillStyle='#1C1816';wrap(x,val,W-2*P-260).forEach((l,i)=>{x.fillText(l,P+260,y+i*32)});y+=Math.max(1,wrap(x,val,W-2*P-260).length)*32+6};
+ sec('Klant en klus');kv('Klant',v('naam'));kv('Adres',v('adres'));kv('Telefoon',v('tel'));kv('Geplaatst',geplaatst());kv('Omschrijving',v('ontwerp'));kv('Palen / beton',[v('palen')?v('palen')+' palen':'',v('beton')?v('beton')+' zakken snelbeton':''].filter(Boolean).join(', '));kv('Monteur',[v('monteur'),v('uren')?v('uren')+' uur':''].filter(Boolean).join(' · '));
+ sec('Controle');const cd=checksData();let lastG='';cd.forEach(it=>{if(it.g!==lastG){lastG=it.g;x.font='700 22px '+B;x.fillStyle='#8A6238';x.fillText(it.g,P,y);y+=32}
+  const col=it.v==='OK'?'#2E7D4F':it.v==='Niet OK'?'#B3261E':'#8E8478',lab=it.v||'–';x.fillStyle=col;x.beginPath();x.roundRect(P,y-22,130,30,15);x.fill();x.fillStyle='#fff';x.font='700 18px '+B;x.textAlign='center';x.fillText(lab,P+65,y);x.textAlign='left';
+  x.fillStyle='#1C1816';x.font='500 23px '+B;const ls=wrap(x,it.t+(it.n?' — '+it.n:''),W-2*P-150);ls.forEach((l,i)=>x.fillText(l,P+150,y+i*30));y+=ls.length*30+10});
+ sec('Meerwerk en restpunten');kv('Meerwerk',$('input[name=meer]:checked').value==='Ja'?[v('meeromschr'),v('meerbedrag')?eur(v('meerbedrag')):'',v('meerakk')].filter(Boolean).join(' · '):'Geen');
+ const r=rps();kv('Restpunten',r.length?r.map(z=>'• '+z.t+(z.d?' (uiterlijk '+new Date(z.d+'T12:00').toLocaleDateString('nl-NL')+')':'')).join('\n'):'Geen');kv('Opmerkingen',v('opm'));
+ if(v('totaal')){sec('Betaling');kv('Totaal opdracht',eur(v('totaal')));if(v('aanbetaald'))kv('Aanbetaald',eur(v('aanbetaald')));kv('Restbedrag',eur(rest())+' – '+v('betstatus')+(v('betstatus')==='Factuur volgt'?', termijn '+v('termijn'):''))}
+ for(const [k,t] of [['voor','Foto\'s vóór'],['na','Foto\'s na']]){if(!FOTO[k].length)continue;sec(t);const cols=2,g=16,cw=(W-2*P-g)/2,ch=cw*0.66;for(let i=0;i<FOTO[k].length;i++){try{const im=await img(FOTO[k][i]);const ox=P+(i%cols)*(cw+g),oy=y+Math.floor(i/cols)*(ch+g),s=Math.max(cw/im.width,ch/im.height);x.save();x.beginPath();x.roundRect(ox,oy,cw,ch,12);x.clip();x.drawImage(im,ox+(cw-im.width*s)/2,oy+(ch-im.height*s)/2,im.width*s,im.height*s);x.restore()}catch(e){}}y+=Math.ceil(FOTO[k].length/cols)*(ch+g)+10}
+ sec('Tevredenheid en akkoord');if(stars)kv('Tevredenheid','★'.repeat(stars)+'☆'.repeat(5-stars)+' ('+stars+'/5)');kv('Reactie klant',v('reactie'));
+ x.font='500 22px '+B;x.fillStyle='#1C1816';wrap(x,'De klant heeft het werk samen met ons nagelopen en verklaart dat het is opgeleverd zoals in dit rapport staat, met eventuele restpunten.',W-2*P).forEach(l=>{x.fillText(l,P,y);y+=30});y+=10;
+ const sw=(W-2*P-40)/2;for(const [id,lab,ox] of [['padK','Handtekening klant',P],['padM','Handtekening monteur',P+sw+40]]){x.fillStyle='#F7F4EE';x.fillRect(ox,y,sw,190);x.fillStyle='#6B6258';x.font='600 20px '+B;x.fillText(lab,ox+16,y+30);if(PADS[id].st.signed){const s=await img(PADS[id].cv.toDataURL());const sc=Math.min((sw-30)/s.width,140/s.height);x.drawImage(s,ox+15,y+42,s.width*sc,s.height*sc)}}
+ y+=210;x.fillStyle='#6B6258';x.font='500 19px '+B;x.fillText('Ondertekend op '+new Date().toLocaleString('nl-NL')+' · decomposietspecialist.nl · info@decomposietspecialist.nl',P,y);y+=40;
+ const out=document.createElement('canvas');out.width=W;out.height=y;out.getContext('2d').drawImage(c,0,0);return await new Promise(res=>out.toBlob(res,'image/jpeg',0.85));
 }
-function fail(t){const e=$('#err');e.textContent=t;e.hidden=false}
-$('#f').addEventListener('submit',async ev=>{
-  ev.preventDefault();$('#err').hidden=true;
-  const naam=$('#naam').value.trim();if(!naam)return fail('Vul de naam van de klant in.');
-  if(!$('#ok').checked)return fail('Vink aan dat de klant het werk heeft nagelopen.');
-  if(!signed)return fail('Laat de klant tekenen in het vak.');
-  try{localStorage.setItem('dcs_monteur',$('#monteur').value.trim())}catch(e){}
-  const btn=$('#send');btn.disabled=true;btn.textContent='Bezig met versturen…';
-  const boxes=[...document.querySelectorAll('#cl input')],ok=boxes.filter(b=>b.checked).map(b=>CHECK[b.dataset.i]),niet=boxes.filter(b=>!b.checked).map(b=>CHECK[b.dataset.i]);
-  const rest=document.querySelector('input[name=rest]:checked').value;
-  const data={_subject:'OPLEVERING '+(rest==='Geen restpunten'?'✓':'(met restpunten)')+' – '+naam,_template:'table',Klant:naam,Adres:$('#adres').value.trim()||'-',Telefoon:$('#tel').value.trim()||'-','Datum oplevering':$('#datum').value,Geplaatst:$('#ontwerp').value.trim()||'-',Klusnummer:$('#nr').value.trim()||'-','Geplaatst door':$('#monteur').value.trim()||'-','Controle afgevinkt':ok.length+' van '+CHECK.length+(ok.length?': '+ok.join('; '):''),'Niet afgevinkt':niet.length?niet.join('; '):'-',Restpunten:rest,Opmerkingen:$('#opm').value.trim()||'-','Foto\'s':FOTO.length?FOTO.length+' (zie bijlage)':'Geen','Akkoord klant':'Ja, ondertekend op '+new Date().toLocaleString('nl-NL')};
-  let sent=false;
-  try{const bl=await rapportBeeld(naam);const fd=new FormData();Object.entries(data).forEach(([k,v])=>fd.append(k,v));if(bl)fd.append('attachment',bl,'oplevering-'+naam.replace(/\W+/g,'-')+'.jpg');
-    const r=await fetch('https://formsubmit.co/ajax/'+KEY,{method:'POST',headers:{Accept:'application/json'},body:fd});const j=await r.json().catch(()=>({}));sent=r.ok&&String(j.success)==='true'}catch(e){}
-  if(!sent){try{data['Foto\'s']='Konden niet mee';const r=await fetch('https://formsubmit.co/ajax/'+KEY,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)});const j=await r.json().catch(()=>({}));sent=r.ok&&String(j.success)==='true'}catch(e){}}
-  if(!sent){btn.disabled=false;btn.textContent='Oplevering versturen';return fail('Versturen lukte niet. Controleer je internetverbinding en probeer het opnieuw.')}
-  const t=($('#tel').value||'').replace(/[^\d+]/g,'').replace(/^\+/,'').replace(/^00/,'').replace(/^0/,'31');
-  if(t){const msg='Hallo '+naam.split(' ')[0]+', bedankt! Je nieuwe composiet schutting is vandaag opgeleverd'+(rest==='Geen restpunten'?'.':', met de afgesproken restpunten.')+' Veel plezier ervan! Tevreden? We zouden een korte review heel fijn vinden.\n\nGroet, De Composiet Specialist';const a=$('#waKlant');a.href='https://wa.me/'+t+'?text='+encodeURIComponent(msg);a.hidden=false}
-  $('#f').hidden=true;$('#done').hidden=false;scrollTo(0,0);
-});
+// ---------- versturen ----------
+function fail(t){const e=$('#err');e.textContent=t;e.hidden=false;go(5)}
+async function verstuur(){
+ $('#err').hidden=true;
+ if(!v('naam'))return fail('Vul de naam van de klant in (stap 1).');
+ const cd=checksData(),open=cd.filter(z=>!z.v).length;if(open)return fail('Er staan nog '+open+' controlepunten open (stap 2).');
+ const bad=cd.filter(z=>z.v==='Niet OK'&&!z.n);if(bad.length)return fail('Vul bij elk "Niet OK"-punt in wat er aan de hand is (stap 2).');
+ if(!$('#ok').checked)return fail('Vink aan dat de klant het werk heeft nagelopen.');
+ if(!PADS.padK.st.signed)return fail('Laat de klant tekenen.');
+ try{localStorage.setItem('dcs_monteur',v('monteur'))}catch(e){}
+ const btn=$('#next');btn.disabled=true;btn.textContent='Rapport maken…';
+ const blob=await rapport();btn.textContent='Versturen…';
+ const r=rps(),bads=cd.filter(z=>z.v==='Niet OK'),meer=$('input[name=meer]:checked').value==='Ja';
+ const data={_subject:'OPLEVERING '+(bads.length||r.length?'(met restpunten)':'✓')+' – '+v('naam'),_template:'table',Klant:v('naam'),Adres:v('adres')||'-',Telefoon:v('tel')||'-',Datum:v('datum'),Klusnummer:v('nr')||'-',Geplaatst:geplaatst()||v('ontwerp')||'-','Monteur / uren':[v('monteur'),v('uren')?v('uren')+' uur':''].filter(Boolean).join(' · ')||'-','Controle':cd.filter(z=>z.v==='OK').length+' OK, '+bads.length+' niet OK, '+cd.filter(z=>z.v==='N.v.t.').length+' n.v.t.','Niet OK':bads.length?bads.map(z=>z.t+': '+z.n).join(' | '):'-',Meerwerk:meer?[v('meeromschr'),v('meerbedrag')?eur(v('meerbedrag')):'',v('meerakk')].filter(Boolean).join(' · '):'Geen',Restpunten:r.length?r.map(z=>z.t+(z.d?' ('+z.d+')':'')).join(' | '):'Geen',Opmerkingen:v('opm')||'-',Restbedrag:v('totaal')?eur(rest())+' – '+v('betstatus'):'-',Tevredenheid:stars?stars+'/5':'-','Reactie klant':v('reactie')||'-','Review vragen':$('#reviewok').checked?'Ja':'Nee','Foto\'s':FOTO.voor.length+' vóór, '+FOTO.na.length+' na (in rapport)','Akkoord klant':'Ja, ondertekend op '+new Date().toLocaleString('nl-NL')};
+ let sent=false;
+ try{const fd=new FormData();Object.entries(data).forEach(([k,val])=>fd.append(k,val));if(blob)fd.append('attachment',blob,'opleverrapport-'+v('naam').replace(/\W+/g,'-')+'.jpg');const res=await fetch('https://formsubmit.co/ajax/'+KEY,{method:'POST',headers:{Accept:'application/json'},body:fd});const j=await res.json().catch(()=>({}));sent=res.ok&&String(j.success)==='true'}catch(e){}
+ if(!sent){try{data['Rapport']='Kon niet als bijlage mee';const res=await fetch('https://formsubmit.co/ajax/'+KEY,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)});const j=await res.json().catch(()=>({}));sent=res.ok&&String(j.success)==='true'}catch(e){}}
+ btn.disabled=false;btn.textContent='Oplevering versturen';
+ if(!sent)return fail('Versturen lukte niet. Controleer je internetverbinding en probeer het opnieuw. Je gegevens blijven bewaard.');
+ try{localStorage.removeItem(STORE)}catch(e){}
+ const url=blob?URL.createObjectURL(blob):'';if(url)$('#rapportimg').src=url;else $('#rapportimg').hidden=true;
+ const file=blob?new File([blob],'opleverrapport-'+v('naam').replace(/\W+/g,'-')+'.jpg',{type:'image/jpeg'}):null;
+ $('#share').onclick=async()=>{if(file&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Opleverrapport',text:'Opleverrapport van je nieuwe composiet schutting – De Composiet Specialist'})}catch(e){}}else if(url){const a=document.createElement('a');a.href=url;a.download=file.name;a.click()}};
+ const t=v('tel').replace(/[^\d+]/g,'').replace(/^\+/,'').replace(/^00/,'').replace(/^0/,'31');
+ if(t){const msg='Hallo '+v('naam').split(' ')[0]+', bedankt! Je nieuwe composiet schutting is vandaag opgeleverd'+(r.length?', met de afgesproken restpunten.':'.')+' Veel plezier ervan!'+($('#reviewok').checked?'\n\nZou je ons een korte Google-review willen geven? Dat helpt ons enorm.':'')+'\n\nGroet, De Composiet Specialist';const a=$('#waKlant');a.href='https://wa.me/'+t+'?text='+encodeURIComponent(msg);a.hidden=false}
+ $('#f').hidden=true;$('#bar').hidden=true;$('#steps').hidden=true;$('#done').hidden=false;scrollTo(0,0);
+}
 </script>
 </body>
 </html>
