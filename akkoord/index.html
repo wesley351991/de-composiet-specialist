@@ -77,7 +77,7 @@ input[type=text],input[type=date]{font:inherit;color:var(--ink);background:var(-
     <label class="f">Je volledige naam<input type="text" id="naam" autocomplete="name" required></label>
     <label class="f">Datum<input type="date" id="datum" required></label>
     <label class="chk"><input type="checkbox" id="ok1"> Ik ga akkoord met de offerte en de prijs hierboven.</label>
-    <label class="chk"><input type="checkbox" id="ok2"> Ik heb de voorwaarden gelezen en ga ermee akkoord.</label>
+    <label class="chk"><input type="checkbox" id="ok2"> Ik heb de voorwaarden hierboven en de <a href="/voorwaarden/" target="_blank" rel="noopener">algemene voorwaarden</a> gelezen en ga ermee akkoord.</label>
     <label class="f" style="margin-top:16px">Handtekening</label>
     <div class="sig"><canvas id="pad" aria-label="Teken hier je handtekening"></canvas><div class="ph" id="ph">Teken hier met je vinger</div></div>
     <div class="sigbar"><span>Teken in het vak hierboven</span><button type="button" class="link" id="clear">Wissen</button></div>
@@ -128,7 +128,7 @@ $('#f').addEventListener('submit',async ev=>{
   if(!signed)return fail('Zet je handtekening in het vak.');
   const btn=$('#send');btn.disabled=true;btn.textContent='Bezig met versturen…';
   const tijd=new Date().toLocaleString('nl-NL');
-  const data={_subject:'AKKOORD offerte'+(get('nr')?' '+get('nr'):'')+' – '+naam,_template:'table',Status:'Akkoord gegeven en ondertekend',Naam:naam,'Datum (ingevuld)':$('#datum').value,'Ondertekend op':tijd,Offerte:get('nr')||'-',Adres:[get('adres'),get('plaats')].filter(Boolean).join(', ')||'-',Ontwerp:get('ontwerp')||'-',Poort:get('poort')||'-',Extra:get('extra')||'-',Plaatsing:get('plaatsing')||'In overleg',Totaalprijs:prijs?eur(prijs):'Volgens offerte',Aanbetaling:aanb+'%','Akkoord offerte':'Ja','Akkoord voorwaarden':'Ja'};
+  const data={_subject:'AKKOORD offerte'+(get('nr')?' '+get('nr'):'')+' – '+naam,_template:'table',Status:'Akkoord gegeven en ondertekend',Naam:naam,'Datum (ingevuld)':$('#datum').value,'Ondertekend op':tijd,Offerte:get('nr')||'-',Adres:[get('adres'),get('plaats')].filter(Boolean).join(', ')||'-',Ontwerp:get('ontwerp')||'-',Poort:get('poort')||'-',Extra:get('extra')||'-',Plaatsing:get('plaatsing')||'In overleg',Totaalprijs:prijs?eur(prijs):'Volgens offerte',Aanbetaling:aanb+'%','Akkoord offerte':'Ja','Akkoord voorwaarden':'Ja (incl. algemene voorwaarden, versie november 2026)'};
   const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
   let ok=false;
   try{
