@@ -42,6 +42,8 @@ input[type=text],input[type=date]{font:inherit;color:var(--ink);background:var(-
 .note{color:var(--muted);font-size:.88rem}
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 @media(max-width:480px){dl div{grid-template-columns:1fr;gap:2px}}
+.g2{display:grid;grid-template-columns:1.4fr 1fr;gap:0 10px}@media(max-width:420px){.g2{grid-template-columns:1fr}}
+.chk a{color:var(--brown)}
 </style>
 </head>
 <body>
@@ -75,13 +77,12 @@ input[type=text],input[type=date]{font:inherit;color:var(--ink);background:var(-
 
   <form class="card" id="f" novalidate>
     <h2>Akkoord geven</h2>
-    <label class="f">Je volledige naam<input type="text" id="naam" autocomplete="name" required></label>
-    <label class="f">Datum<input type="date" id="datum" required></label>
-    <label class="chk"><input type="checkbox" id="ok1"> Ik ga akkoord met de offerte en de prijs hierboven.</label>
-    <label class="chk"><input type="checkbox" id="ok2"> Ik heb de voorwaarden hierboven en de <a href="/voorwaarden/" target="_blank" rel="noopener">algemene voorwaarden</a> gelezen en ga ermee akkoord.</label>
+    <label class="chk"><input type="checkbox" id="ok1"> <span>Ik ga akkoord met de offerte en de prijs hierboven.</span></label>
+    <label class="chk"><input type="checkbox" id="ok2"> <span>Ik heb de voorwaarden hierboven en de <a href="/voorwaarden/" target="_blank" rel="noopener">algemene voorwaarden</a> gelezen en ga ermee akkoord.</span></label>
     <label class="f" style="margin-top:16px">Handtekening</label>
     <div class="sig"><canvas id="pad" aria-label="Teken hier je handtekening"></canvas><div class="ph" id="ph">Teken hier met je vinger</div></div>
     <div class="sigbar"><span>Teken in het vak hierboven</span><button type="button" class="link" id="clear">Wissen</button></div>
+    <div class="g2"><label class="f">Naam ondertekenaar<input type="text" id="naam" autocomplete="name" required></label><label class="f">Datum<input type="date" id="datum" required></label></div>
     <p class="err" id="err" role="alert" hidden></p>
     <button class="btn" type="submit" id="send">Akkoord en ondertekenen</button>
     <p class="note" style="margin-top:12px">Na het ondertekenen ontvangt De Composiet Specialist je akkoord met handtekening. Je krijgt daarna de factuur voor de aanbetaling.</p>
@@ -127,10 +128,18 @@ $('#f').addEventListener('submit',async ev=>{
   if(!naam)return fail('Vul je volledige naam in.');
   if(!$('#ok1').checked||!$('#ok2').checked)return fail('Vink beide vakjes aan om akkoord te geven.');
   if(!signed)return fail('Zet je handtekening in het vak.');
+  if(!$('#datum').value)return fail('Vul de datum in onder je handtekening.');
   const btn=$('#send');btn.disabled=true;btn.textContent='Bezig met versturen…';
   const tijd=new Date().toLocaleString('nl-NL');
-  const data={_subject:'AKKOORD offerte'+(get('nr')?' '+get('nr'):'')+' – '+naam,_template:'table',Status:'Akkoord gegeven en ondertekend',Naam:naam,'Datum (ingevuld)':$('#datum').value,'Ondertekend op':tijd,Offerte:get('nr')||'-',Adres:[get('adres'),get('plaats')].filter(Boolean).join(', ')||'-',Ontwerp:get('ontwerp')||'-',Poort:get('poort')||'-',Extra:get('extra')||'-',Plaatsing:get('plaatsing')||'In overleg',Totaalprijs:prijs?eur(prijs):'Volgens offerte',Aanbetaling:aanb+'%','Akkoord offerte':'Ja','Akkoord voorwaarden':'Ja (incl. algemene voorwaarden, versie november 2026)'};
-  const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
+  const datumNL=$('#datum').value?new Date($('#datum').value+'T12:00').toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'}):'';
+  const data={_subject:'AKKOORD offerte'+(get('nr')?' '+get('nr'):'')+' – '+naam,_template:'table',Status:'Akkoord gegeven en ondertekend',Naam:naam,'Ondertekend door':naam,'Datum handtekening':datumNL||$('#datum').value,'Ondertekend op':tijd,Offerte:get('nr')||'-',Adres:[get('adres'),get('plaats')].filter(Boolean).join(', ')||'-',Ontwerp:get('ontwerp')||'-',Poort:get('poort')||'-',Extra:get('extra')||'-',Plaatsing:get('plaatsing')||'In overleg',Totaalprijs:prijs?eur(prijs):'Volgens offerte',Aanbetaling:aanb+'%','Akkoord offerte':'Ja','Akkoord voorwaarden':'Ja (incl. algemene voorwaarden, versie november 2026)'};
+  const blob=await (async()=>{const W=1200,c=document.createElement('canvas'),x=c.getContext('2d');c.width=W;c.height=620;x.fillStyle='#fff';x.fillRect(0,0,W,620);
+    x.fillStyle='#1C1816';x.fillRect(0,0,W,110);x.fillStyle='#C49A62';x.font='700 22px sans-serif';x.fillText('DE COMPOSIET SPECIALIST',40,45);x.fillStyle='#F1E9DB';x.font='bold 40px sans-serif';x.fillText('AKKOORDVERKLARING',40,90);
+    x.fillStyle='#1C1816';x.font='24px sans-serif';let y=160;[['Offerte',get('nr')||'-'],['Ontwerp',get('ontwerp')||'-'],['Totaalprijs',prijs?eur(prijs):'Volgens offerte']].forEach(([k,v])=>{x.fillStyle='#6B6258';x.fillText(k,40,y);x.fillStyle='#1C1816';x.fillText(String(v).slice(0,70),260,y);y+=38});
+    x.fillStyle='#F7F4EE';x.fillRect(40,y+10,W-80,300);const im=await new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src=cv.toDataURL('image/png')});const sc=Math.min((W-120)/im.width,190/im.height);x.drawImage(im,60,y+25,im.width*sc,im.height*sc);
+    x.fillStyle='#C9BBA6';x.fillRect(60,y+225,W-120,2);x.fillStyle='#1C1816';x.font='bold 26px sans-serif';x.fillText('Naam: '+naam,60,y+260);x.fillText('Datum: '+datumNL,60,y+295);
+    x.fillStyle='#6B6258';x.font='20px sans-serif';x.fillText('Digitaal ondertekend op '+tijd+' · akkoord met offerte en algemene voorwaarden',40,600);
+    return await new Promise(r=>c.toBlob(r,'image/png'))})();
   let ok=false;
   try{
     const fd=new FormData();Object.entries(data).forEach(([k,v])=>fd.append(k,v));if(blob)fd.append('attachment',blob,'handtekening-'+naam.replace(/\W+/g,'-')+'.png');
