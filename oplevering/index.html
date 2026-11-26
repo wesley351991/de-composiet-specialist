@@ -191,9 +191,11 @@ textarea{min-height:80px;resize:vertical}
     <label class="chk"><input type="checkbox" id="ok"> De klant heeft het werk samen met ons nagelopen en verklaart dat het is opgeleverd zoals in dit formulier staat, met eventuele restpunten.</label>
     <div class="sig"><canvas id="padK" aria-label="Handtekening klant"></canvas><div class="ph">Klant tekent hier</div></div>
     <div class="sigbar"><span>Klant</span><button type="button" class="link" data-clear="padK">Wissen</button></div>
+    <div class="g2"><label class="f">Naam ondertekenaar<input type="text" id="signaamK" autocomplete="off"></label><label class="f">Datum<input type="date" id="sigdatK"></label></div>
     <h3 style="margin-top:14px">Handtekening monteur</h3>
     <div class="sig"><canvas id="padM" aria-label="Handtekening monteur"></canvas><div class="ph">Monteur tekent hier</div></div>
     <div class="sigbar"><span>Monteur</span><button type="button" class="link" data-clear="padM">Wissen</button></div>
+    <div class="g2"><label class="f">Naam monteur<input type="text" id="signaamM" autocomplete="off"></label><label class="f">Datum<input type="date" id="sigdatM"></label></div>
     <p class="err" id="err" role="alert" hidden></p>
   </div>
 </section>
@@ -235,7 +237,7 @@ $('#steps').innerHTML=STEPS.map((s,i)=>'<button type="button" data-go="'+i+'" ar
 function go(n){step=Math.max(0,Math.min(STEPS.length-1,n));$$('.step').forEach(s=>s.hidden=+s.dataset.s!==step);
  $$('#steps button').forEach((b,i)=>{b.className=i===step?'on':(i<step?'done':'')});
  $('#prev').style.visibility=step?'visible':'hidden';$('#next').textContent=step===STEPS.length-1?'Oplevering versturen':'Volgende →';
- if(step===5)overzicht();setTimeout(sizeAll,30);scrollTo({top:0,behavior:'smooth'});save()}
+ if(step===5){overzicht();if(!$('#signaamK').value)$('#signaamK').value=v('naam');if(!$('#signaamM').value)$('#signaamM').value=v('monteur')}setTimeout(sizeAll,30);scrollTo({top:0,behavior:'smooth'});save()}
 $('#steps').onclick=e=>{const b=e.target.closest('[data-go]');if(b)go(+b.dataset.go)};
 $('#prev').onclick=()=>go(step-1);$('#next').onclick=()=>step<STEPS.length-1?go(step+1):verstuur();
 // ---------- controlelijst ----------
@@ -272,7 +274,7 @@ function sizeAll(){Object.values(PADS).forEach(({cv,ctx,st})=>{const r=cv.getBou
 pad('padK');pad('padM');addEventListener('resize',sizeAll);
 $$('[data-clear]').forEach(b=>b.onclick=()=>{const p=PADS[b.dataset.clear];p.ctx.clearRect(0,0,p.cv.width,p.cv.height);p.st.signed=false;p.cv.nextElementSibling.hidden=false});
 // ---------- gegevens verzamelen ----------
-const FIELDS=['naam','adres','tel','email','datum','nr','monteur','uren','lengte','hoogte','palen','kleur','profiel','richting','onderprofiel','poort','beton','ontwerp','meeromschr','meerbedrag','meerakk','opm','totaal','aanbetaald','betstatus','termijn','reactie'];
+const FIELDS=['signaamK','sigdatK','signaamM','sigdatM','naam','adres','tel','email','datum','nr','monteur','uren','lengte','hoogte','palen','kleur','profiel','richting','onderprofiel','poort','beton','ontwerp','meeromschr','meerbedrag','meerakk','opm','totaal','aanbetaald','betstatus','termijn','reactie'];
 const v=id=>($('#'+id).value||'').trim();
 function checksData(){return ALL.map(([g,t],i)=>({g,t,v:($('input[name=c'+i+']:checked')||{}).value||'',n:v('cn'+i)}))}
 function rps(){return $$('#rps .rp').map(r=>({t:r.querySelector('.rpt').value.trim(),d:r.querySelector('.rpd').value})).filter(r=>r.t)}
@@ -287,7 +289,7 @@ function load(){let d=null;try{d=JSON.parse(localStorage.getItem(STORE)||'null')
  if(d&&(!fromUrl||d.f.naam===q.get('naam'))){Object.entries(d.f||{}).forEach(([k,x])=>{const e=$('#'+k);if(e&&x!=null)e.value=x});(d.c||[]).forEach(([x,n],i)=>{if(x){const r=$('input[name=c'+i+'][value="'+x+'"]');if(r)r.checked=true}$('#cn'+i).value=n||''});
   if(d.meer){$('input[name=meer][value="'+d.meer+'"]').checked=true;$('#meerbox').hidden=d.meer!=='Ja'}(d.rp||[]).forEach(r=>addRp(r.t,r.d));stars=d.stars||0;$('#reviewok').checked=!!d.review}
  else{['naam','adres','tel','ontwerp','nr'].forEach(k=>{if(q.get(k))$('#'+k).value=q.get(k)});try{$('#monteur').value=localStorage.getItem('dcs_monteur')||''}catch(e){}}
- if(!$('#datum').value)$('#datum').value=new Date().toISOString().slice(0,10);
+ const today=new Date().toISOString().slice(0,10);['datum','sigdatK','sigdatM'].forEach(id=>{if(!$('#'+id).value)$('#'+id).value=today});
  if(!$$('#rps .rp').length)addRp();paint();upd();rest()}
 document.addEventListener('input',e=>{if(e.target.closest('#f'))save()});
 $('#wis').onclick=()=>{if($('#wis').dataset.c){try{localStorage.removeItem(STORE)}catch(e){}location.href=location.pathname}else{$('#wis').dataset.c=1;$('#wis').textContent='Zeker weten? Tik nog een keer';setTimeout(()=>{delete $('#wis').dataset.c;$('#wis').textContent='Formulier leegmaken'},3000)}};
@@ -313,8 +315,9 @@ async function rapport(){
  for(const [k,t] of [['voor','Foto\'s vóór'],['na','Foto\'s na']]){if(!FOTO[k].length)continue;sec(t);const cols=2,g=16,cw=(W-2*P-g)/2,ch=cw*0.66;for(let i=0;i<FOTO[k].length;i++){try{const im=await img(FOTO[k][i]);const ox=P+(i%cols)*(cw+g),oy=y+Math.floor(i/cols)*(ch+g),s=Math.max(cw/im.width,ch/im.height);x.save();x.beginPath();x.roundRect(ox,oy,cw,ch,12);x.clip();x.drawImage(im,ox+(cw-im.width*s)/2,oy+(ch-im.height*s)/2,im.width*s,im.height*s);x.restore()}catch(e){}}y+=Math.ceil(FOTO[k].length/cols)*(ch+g)+10}
  sec('Tevredenheid en akkoord');if(stars)kv('Tevredenheid','★'.repeat(stars)+'☆'.repeat(5-stars)+' ('+stars+'/5)');kv('Reactie klant',v('reactie'));
  x.font='500 22px '+B;x.fillStyle='#1C1816';wrap(x,'De klant heeft het werk samen met ons nagelopen en verklaart dat het is opgeleverd zoals in dit rapport staat, met eventuele restpunten.',W-2*P).forEach(l=>{x.fillText(l,P,y);y+=30});y+=10;
- const sw=(W-2*P-40)/2;for(const [id,lab,ox] of [['padK','Handtekening klant',P],['padM','Handtekening monteur',P+sw+40]]){x.fillStyle='#F7F4EE';x.fillRect(ox,y,sw,190);x.fillStyle='#6B6258';x.font='600 20px '+B;x.fillText(lab,ox+16,y+30);if(PADS[id].st.signed){const s=await img(PADS[id].cv.toDataURL());const sc=Math.min((sw-30)/s.width,140/s.height);x.drawImage(s,ox+15,y+42,s.width*sc,s.height*sc)}}
- y+=210;x.fillStyle='#6B6258';x.font='500 19px '+B;x.fillText('Ondertekend op '+new Date().toLocaleString('nl-NL')+' · decomposietspecialist.nl · info@decomposietspecialist.nl',P,y);y+=40;
+ const sw=(W-2*P-40)/2;const fd=d=>d?new Date(d+'T12:00').toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'}):'';
+ for(const [id,lab,ox,nm,dt] of [['padK','Handtekening klant',P,v('signaamK'),v('sigdatK')],['padM','Handtekening monteur',P+sw+40,v('signaamM'),v('sigdatM')]]){x.fillStyle='#F7F4EE';x.fillRect(ox,y,sw,250);x.fillStyle='#6B6258';x.font='600 20px '+B;x.fillText(lab,ox+16,y+30);if(PADS[id].st.signed){const s=await img(PADS[id].cv.toDataURL());const sc=Math.min((sw-30)/s.width,140/s.height);x.drawImage(s,ox+15,y+42,s.width*sc,s.height*sc)}x.fillStyle='#C9BBA6';x.fillRect(ox+16,y+192,sw-32,2);x.fillStyle='#1C1816';x.font='600 21px '+B;x.fillText('Naam: '+(nm||'–'),ox+16,y+220);x.fillText('Datum: '+(fd(dt)||'–'),ox+16,y+244)}
+ y+=272;x.fillStyle='#6B6258';x.font='500 19px '+B;x.fillText('Ondertekend op '+new Date().toLocaleString('nl-NL')+' · decomposietspecialist.nl · info@decomposietspecialist.nl',P,y);y+=40;
  const out=document.createElement('canvas');out.width=W;out.height=y;out.getContext('2d').drawImage(c,0,0);return await new Promise(res=>out.toBlob(res,'image/jpeg',0.85));
 }
 // ---------- versturen ----------
@@ -326,11 +329,13 @@ async function verstuur(){
  const bad=cd.filter(z=>z.v==='Niet OK'&&!z.n);if(bad.length)return fail('Vul bij elk "Niet OK"-punt in wat er aan de hand is (stap 2).');
  if(!$('#ok').checked)return fail('Vink aan dat de klant het werk heeft nagelopen.');
  if(!PADS.padK.st.signed)return fail('Laat de klant tekenen.');
+ if(!v('sigdatK'))return fail('Vul de datum bij de handtekening van de klant in.');
+ if(PADS.padM.st.signed&&!v('sigdatM'))return fail('Vul de datum bij de handtekening van de monteur in.');
  try{localStorage.setItem('dcs_monteur',v('monteur'))}catch(e){}
  const btn=$('#next');btn.disabled=true;btn.textContent='Rapport maken…';
  const blob=await rapport();btn.textContent='Versturen…';
  const r=rps(),bads=cd.filter(z=>z.v==='Niet OK'),meer=$('input[name=meer]:checked').value==='Ja';
- const data={_subject:'OPLEVERING '+(bads.length||r.length?'(met restpunten)':'✓')+' – '+v('naam'),_template:'table',Klant:v('naam'),Adres:v('adres')||'-',Telefoon:v('tel')||'-',Datum:v('datum'),Klusnummer:v('nr')||'-',Geplaatst:geplaatst()||v('ontwerp')||'-','Monteur / uren':[v('monteur'),v('uren')?v('uren')+' uur':''].filter(Boolean).join(' · ')||'-','Controle':cd.filter(z=>z.v==='OK').length+' OK, '+bads.length+' niet OK, '+cd.filter(z=>z.v==='N.v.t.').length+' n.v.t.','Niet OK':bads.length?bads.map(z=>z.t+': '+z.n).join(' | '):'-',Meerwerk:meer?[v('meeromschr'),v('meerbedrag')?eur(v('meerbedrag')):'',v('meerakk')].filter(Boolean).join(' · '):'Geen',Restpunten:r.length?r.map(z=>z.t+(z.d?' ('+z.d+')':'')).join(' | '):'Geen',Opmerkingen:v('opm')||'-',Restbedrag:v('totaal')?eur(rest())+' – '+v('betstatus'):'-',Tevredenheid:stars?stars+'/5':'-','Reactie klant':v('reactie')||'-','Review vragen':$('#reviewok').checked?'Ja':'Nee','Foto\'s':FOTO.voor.length+' vóór, '+FOTO.na.length+' na (in rapport)','Akkoord klant':'Ja, ondertekend op '+new Date().toLocaleString('nl-NL')};
+ const data={_subject:'OPLEVERING '+(bads.length||r.length?'(met restpunten)':'✓')+' – '+v('naam'),_template:'table',Klant:v('naam'),Adres:v('adres')||'-',Telefoon:v('tel')||'-',Datum:v('datum'),Klusnummer:v('nr')||'-',Geplaatst:geplaatst()||v('ontwerp')||'-','Monteur / uren':[v('monteur'),v('uren')?v('uren')+' uur':''].filter(Boolean).join(' · ')||'-','Controle':cd.filter(z=>z.v==='OK').length+' OK, '+bads.length+' niet OK, '+cd.filter(z=>z.v==='N.v.t.').length+' n.v.t.','Niet OK':bads.length?bads.map(z=>z.t+': '+z.n).join(' | '):'-',Meerwerk:meer?[v('meeromschr'),v('meerbedrag')?eur(v('meerbedrag')):'',v('meerakk')].filter(Boolean).join(' · '):'Geen',Restpunten:r.length?r.map(z=>z.t+(z.d?' ('+z.d+')':'')).join(' | '):'Geen',Opmerkingen:v('opm')||'-',Restbedrag:v('totaal')?eur(rest())+' – '+v('betstatus'):'-',Tevredenheid:stars?stars+'/5':'-','Reactie klant':v('reactie')||'-','Review vragen':$('#reviewok').checked?'Ja':'Nee','Foto\'s':FOTO.voor.length+' vóór, '+FOTO.na.length+' na (in rapport)','Akkoord klant':'Ja, ondertekend door '+(v('signaamK')||v('naam'))+' op '+v('sigdatK'),'Ondertekend monteur':(v('signaamM')||v('monteur')||'-')+' op '+v('sigdatM')};
  let sent=false;
  try{const fd=new FormData();Object.entries(data).forEach(([k,val])=>fd.append(k,val));if(blob)fd.append('attachment',blob,'opleverrapport-'+v('naam').replace(/\W+/g,'-')+'.jpg');const res=await fetch('https://formsubmit.co/ajax/'+KEY,{method:'POST',headers:{Accept:'application/json'},body:fd});const j=await res.json().catch(()=>({}));sent=res.ok&&String(j.success)==='true'}catch(e){}
  if(!sent){try{data['Rapport']='Kon niet als bijlage mee';const res=await fetch('https://formsubmit.co/ajax/'+KEY,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)});const j=await res.json().catch(()=>({}));sent=res.ok&&String(j.success)==='true'}catch(e){}}
