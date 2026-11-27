@@ -309,6 +309,15 @@ footer{background:linear-gradient(180deg,#1F1A15,#12100C)}
 .ptag strong{font:800 1.75rem var(--d);color:#1C1816;letter-spacing:-.01em}
 .ptag em{font:500 .74rem/1.25 var(--b);font-style:normal;color:#6B6258;padding-left:10px;border-left:1px solid #E5DCCD}
 .cardbody{padding-top:20px}
+
+/* prijsbalk v4: goud, afgerond */
+.gbar{position:absolute;left:12px;right:12px;bottom:12px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:11px 16px;border-radius:14px;background:linear-gradient(135deg,#E2C08F 0%,#C49A62 55%,#A97C46 100%);box-shadow:0 10px 22px -10px rgba(60,40,20,.55),inset 0 1px 0 rgba(255,255,255,.45);line-height:1;color:#1C1816}
+.gbar .gl{display:flex;align-items:baseline;gap:7px}
+.gbar small{font:700 .68rem var(--b);letter-spacing:.14em;text-transform:uppercase;color:#3A2B1C}
+.gbar strong{font:800 1.6rem var(--d);color:#1C1816;letter-spacing:0}
+.gbar em{font:600 .85rem var(--b);font-style:normal;color:#2B1F14}
+.gbar .gr{font:600 .78rem var(--b);color:#2B1F14;white-space:nowrap}
+.cardimg img{padding-bottom:0}
 </style>
 </head>
 <body>
@@ -623,7 +632,7 @@ function card(e){var s=e[0],l=e[1],d=e[3],pr=eur0(d==='h'?P.horizontaal:P.vertic
  var look={teak:'Warme houtlook',oak:'Lichte, natuurlijke houtlook',walnut:'Diepe, donkere houtlook',grey:'Rustige, tijdloze uitstraling',black:'Moderne, donkere uitstraling'}[e[2]];
  var desc=look+(e[4]==='grain'?' met een natuurlijke houtnerf op brede '+(d==='h'?'horizontale':'verticale')+' planken.':' met een strak '+rt+' reliëf.');
  var a=document.createElement('article');a.className='card';a.dataset.d=d;
- a.innerHTML='<button type="button" class="cardimg"><img src="'+IMGF[s]+'" alt="Composiet schutting '+l+'" loading="lazy"><span class="ptag"><small>vanaf</small><strong>'+pr+'</strong><em>per meter<br>incl. montage</em></span></button><div class="cardbody"><div class="chead"><div><p class="ckick">'+prof+' • '+rt+'</p><h3>'+kl+' '+prof+'</h3></div></div><p class="cdesc">'+desc+'</p><p class="cmeta">Met zwarte aluminium palen · incl. montage</p><button type="button" class="btn cbtn">Stel jouw schutting samen →</button></div>';
+ a.innerHTML='<button type="button" class="cardimg"><img src="'+IMGF[s]+'" alt="Composiet schutting '+l+'" loading="lazy"><span class="gbar"><span class="gl"><small>Vanaf</small><strong>'+pr+'</strong><em>per meter</em></span><span class="gr">incl. montage</span></span></button><div class="cardbody"><div class="chead"><div><p class="ckick">'+prof+' • '+rt+'</p><h3>'+kl+' '+prof+'</h3></div></div><p class="cdesc">'+desc+'</p><p class="cmeta">Met zwarte aluminium palen · incl. montage</p><button type="button" class="btn cbtn">Stel jouw schutting samen →</button></div>';
  a.querySelector('.btn').addEventListener('click',function(){setExample(e);location.hash='offerte'});
  a.querySelector('.cardimg').addEventListener('click',function(){openLb(IMGF[s],l,e)});return a}
 function openLb(src,l,e){var o=document.getElementById('lb');if(!o){o=document.createElement('div');o.id='lb';o.innerHTML='<div class="lbin"><button type="button" class="lbx" aria-label="Sluiten">×</button><img alt=""><div class="lbcap"></div><button type="button" class="btn lbgo">Stel jouw schutting samen</button></div>';document.body.appendChild(o);
