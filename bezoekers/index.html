@@ -74,10 +74,10 @@ function sod(d){var x=new Date(d);x.setHours(0,0,0,0);return x}
 var QUEUE=Promise.resolve(),LAST=0;
 function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
 function api(path,q,tries){var u=new URL(SITE+'/api/v0/'+path);Object.keys(q||{}).forEach(function(k){u.searchParams.set(k,q[k])});tries=tries||0;
- var job=QUEUE.then(function(){var gap=320-(Date.now()-LAST);return gap>0?wait(gap):0}).then(function(){LAST=Date.now();
-  return fetch(u,{headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'}})});
+ var job=QUEUE.then(function(){var gap=650-(Date.now()-LAST);return gap>0?wait(gap):0}).then(function(){LAST=Date.now();
+  return fetch(u,{headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'}}).catch(function(e){if(tries<4)return{retry:1};throw e})});
  QUEUE=job.catch(function(){});
- return job.then(function(r){if(r.status===401||r.status===403)throw{auth:1};
+ return job.then(function(r){if(r.retry)return wait(1500*(tries+1)).then(function(){return api(path,q,tries+1)});if(r.status===401||r.status===403)throw{auth:1};
   if(r.status===429&&tries<4)return wait(1200*(tries+1)).then(function(){return api(path,q,tries+1)});
   if(!r.ok)return r.text().then(function(t){throw{status:r.status,msg:t}});return r.json()})}
 
@@ -125,8 +125,8 @@ function load(){
   api('stats/toprefs',Object.assign({limit:10},q)),
   api('stats/locations',Object.assign({limit:10},q)),
   api('stats/systems',Object.assign({limit:10},q)),
-  api('stats/total',{start:iso(sod(new Date())),end:iso(new Date(Math.ceil(Date.now()/36e5)*36e5))}).catch(function(){return{total:0}})
- ]).then(function(a){render(a[0],a[1],a[2],a[3],a[4],a[5],a[6])}).catch(function(e){
+  PER==='1'?null:api('stats/total',{start:iso(sod(new Date())),end:iso(new Date(Math.ceil(Date.now()/36e5)*36e5))}).catch(function(){return{total:0}})
+ ]).then(function(a){render(a[0],a[1],a[2],a[3],a[4],a[5],a[6]||a[0])}).catch(function(e){
   if(e&&e.auth){try{localStorage.removeItem(KEY)}catch(x){}tok=null;return setup('Deze sleutel werkt niet (meer). Maak een nieuwe aan en zet het vinkje bij "Read statistics".')}
   app.innerHTML=tabs()+'<div class="card"><h2>Even geen verbinding</h2><p class="sub">De gegevens konden niet worden opgehaald. Wacht een paar seconden en tik op Ververs.</p><p class="sub" style="font-size:12px">Code: '+esc((e&&e.status)||'netwerk')+' '+esc(((e&&e.msg)||String(e&&e.message||'')).slice(0,140))+'</p></div>';bindTabs()});
 }
