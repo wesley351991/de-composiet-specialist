@@ -101,6 +101,10 @@ var LAND={'NL':'Nederland','BE':'België','DE':'Duitsland','FR':'Frankrijk','GB'
 function locName(s){var n=s.name||s.id||'';var c=(s.id||'').split('-')[0];var flag=c&&c.length===2?String.fromCodePoint.apply(null,c.toUpperCase().split('').map(function(x){return 127397+x.charCodeAt(0)})):'🌍';
  var nm=(s.id&&s.id.length===2&&LAND[c])?LAND[c]:n;return[flag,nm||'Onbekend']}
 
+var PROV={'NB':'Noord-Brabant','LI':'Limburg','GE':'Gelderland','UT':'Utrecht','NH':'Noord-Holland','ZH':'Zuid-Holland','ZE':'Zeeland','OV':'Overijssel','DR':'Drenthe','GR':'Groningen','FR':'Friesland','FL':'Flevoland',
+ 'north brabant':'Noord-Brabant','noord-brabant':'Noord-Brabant','limburg':'Limburg','gelderland':'Gelderland','utrecht':'Utrecht','north holland':'Noord-Holland','noord-holland':'Noord-Holland','south holland':'Zuid-Holland','zuid-holland':'Zuid-Holland','zeeland':'Zeeland','overijssel':'Overijssel','drenthe':'Drenthe','groningen':'Groningen','friesland':'Friesland','fryslan':'Friesland','fryslân':'Friesland','flevoland':'Flevoland'};
+var WERK={'Noord-Brabant':1,'Limburg':1,'Gelderland':1,'Utrecht':1};
+function provName(i){var id=String(i.id||'').replace(/^NL-/,''),n=String(i.name||'');var nm=PROV[id]||PROV[n.toLowerCase()]||n||'Onbekend';if(!n&&!id)nm='Onbekend';return[WERK[nm]?'📍':'🗺️',nm+(WERK[nm]?' · werkgebied':'')]}
 function list(items,tot,map,max){if(!items.length)return'<p class="empty">Nog geen gegevens in deze periode.</p>';
  var top=Math.max.apply(null,items.map(function(i){return i.count}))||1;
  return '<ul class="list">'+items.slice(0,max||8).map(function(i){var m=map(i);var pc=tot?Math.round(i.count/tot*100):0;
@@ -125,15 +129,16 @@ function load(){
   api('stats/toprefs',Object.assign({limit:10},q)),
   api('stats/locations',Object.assign({limit:10},q)),
   api('stats/systems',Object.assign({limit:10},q)),
+  api('stats/locations/NL',Object.assign({limit:15},q)).catch(function(){return{stats:[]}}),
   PER==='1'?null:api('stats/total',{start:iso(sod(new Date())),end:iso(new Date(Math.ceil(Date.now()/36e5)*36e5))}).catch(function(){return{total:0}})
- ]).then(function(a){render(a[0],a[1],a[2],a[3],a[4],a[5],a[6]||a[0])}).catch(function(e){
+ ]).then(function(a){render(a[0],a[1],a[2],a[3],a[4],a[5],a[7]||a[0],a[6])}).catch(function(e){
   if(e&&e.auth){try{localStorage.removeItem(KEY)}catch(x){}tok=null;return setup('Deze sleutel werkt niet (meer). Maak een nieuwe aan en zet het vinkje bij "Read statistics".')}
   app.innerHTML=tabs()+'<div class="card"><h2>Even geen verbinding</h2><p class="sub">De gegevens konden niet worden opgehaald. Wacht een paar seconden en tik op Ververs.</p><p class="sub" style="font-size:12px">Code: '+esc((e&&e.status)||'netwerk')+' '+esc(((e&&e.msg)||String(e&&e.message||'')).slice(0,140))+'</p></div>';bindTabs()});
 }
 function tabs(){return'<div class="tabs">'+[['1','Vandaag'],['7','7 dagen'],['30','30 dagen'],['jaar','Dit jaar']].map(function(t){return'<button type="button" data-p="'+t[0]+'" class="'+(t[0]===PER?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div>'}
 function bindTabs(){app.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){PER=b.dataset.p;try{localStorage.setItem('gc_per',PER)}catch(e){}load()}})}
 
-function render(tot,prev,hits,refs,locs,sys,today){
+function render(tot,prev,hits,refs,locs,sys,today,prov){
  var T=tot.total||0,events=(hits.hits||[]).filter(function(h){return h.event}),pages=(hits.hits||[]).filter(function(h){return!h.event});
  function ev(p){var h=events.find(function(x){return x.path===p});return h?h.count:0}
  var off=ev('offerte-verstuurd'),wa=ev('klik-whatsapp'),bel=ev('klik-bellen');
@@ -159,7 +164,9 @@ function render(tot,prev,hits,refs,locs,sys,today){
  var rt=(refs.stats||[]).reduce(function(s,x){return s+x.count},0);
  h+='<div class="card"><h2>Hoe vinden ze je?</h2><p class="sub">Via welke website of app mensen bij jou terechtkwamen.</p>'+list(refs.stats||[],rt,function(i){return refIcon(i.name)})+'</div>';
  var lt=(locs.stats||[]).reduce(function(s,x){return s+x.count},0);
- h+='<div class="card"><h2>Waar komen ze vandaan?</h2><p class="sub">Land of regio van de bezoekers.</p>'+list(locs.stats||[],lt,locName)+'</div>';
+ var pv=((prov&&prov.stats)||[]),pvt=pv.reduce(function(a,x){return a+x.count},0);
+ h+='<div class="card"><h2>Uit welke provincie?</h2><p class="sub">Bezoekers uit Nederland, per provincie. 📍 = jouw werkgebied.</p>'+(pv.length&&!(pv.length===1&&!pv[0].name)?list(pv,pvt,provName,12):'<p class="empty">Nog geen provincies bekend. Zet in GoatCounter bij <b>Settings → Collect</b> het vinkje bij <b>Region</b> aan, dan verschijnen ze hier.</p>')+'<p class="sub" style="margin:10px 0 0;font-size:12px">Exacte plaatsen (zoals Helmond of Eindhoven) houdt GoatCounter niet bij, uit privacy.</p></div>';
+ h+='<div class="card"><h2>Uit welk land?</h2><p class="sub">Land of regio van de bezoekers.</p>'+list(locs.stats||[],lt,locName)+'</div>';
  var mob=0,dt=0;(sys.stats||[]).forEach(function(s){var k=(s.name||'').toLowerCase();if(k.indexOf('ios')===0||k.indexOf('android')===0)mob+=s.count;else dt+=s.count});
  h+='<div class="card"><h2>Telefoon of computer?</h2><p class="sub">'+(mob+dt?Math.round(mob/(mob+dt)*100)+'% bekijkt je site op een telefoon.':'Waarmee mensen je site bekijken.')+'</p>'+list(sys.stats||[],mob+dt,function(i){return sysName(i.name)})+'</div>';
  if(!T)h='<div class="tip">Nog geen bezoekers in deze periode. Deel je website op Facebook, TikTok en WhatsApp, dan zie je hier snel de eerste bezoekers.</div>'+h;
