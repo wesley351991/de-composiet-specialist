@@ -599,6 +599,7 @@ document.getElementById('form').addEventListener('submit',function(e){e.preventD
   Plaatsing:el('plan').value,Poort:s.gate?s.gateLabel+' ('+euro(s.gatePriceVal)+')':'Geen','Oude schutting slopen':el('old').value==='1'?'Ja':'Nee',Afvoeren:el('afvoer').value==='1'?'Ja (in overleg)':'Nee',Hoogteverschil:el('hv').value==='0'?'Nee':el('hv').value,Ontwerp:ontwerp,'Prijsindicatie (incl. plaatsing)':el('price').textContent,Openingskorting:KORTING?KORTING+'% op schutting en poort (eerste 20 klanten), al verwerkt in de prijs':'Geen'};
  var wt=['Hallo De Composiet Specialist, ik heb via de website een offerte aangevraagd:','','Naam: '+n,'Woonplaats: '+(data.Woonplaats!=='-'?data.Woonplaats+' ':'')+'('+p+')','Telefoon: '+data.Telefoon,'E-mail: '+m,'','Ontwerp: '+ontwerp,'Poort: '+data.Poort,'Oude schutting slopen: '+data['Oude schutting slopen'],'Afvoeren: '+data.Afvoeren,'Hoogteverschil: '+data.Hoogteverschil,'Plaatsing: '+data.Plaatsing,'Prijsindicatie: '+el('price').textContent+' (incl. plaatsing'+(KORTING?', incl. '+KORTING+'% openingskorting':'')+')'].join('\n');
  var wa='https://wa.me/31641071486?text='+encodeURIComponent(wt);
+ if(window.gcEv)window.gcEv('offerte-verstuurd','Offerte verstuurd');
  try{window.open(wa,'_blank','noopener')}catch(x){}
  if(btn){btn.disabled=true;btn.dataset.t=btn.textContent;btn.textContent='Bezig met versturen…'}
  data["Situatiefoto's"]=SIT.length?SIT.length+' foto(\'s), zie bijlage':'Geen';
@@ -631,6 +632,8 @@ function route(){var h=(location.hash||'#home').slice(1),p=PAGES.indexOf(h)>=0?h
  document.querySelectorAll('.links a[data-p]').forEach(function(a){if(a.dataset.p===p)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
  document.title=TITLES[p];window.scrollTo(0,0);if(t)setTimeout(function(){t.scrollIntoView()},0);if(p==='offerte')draw()}
 window.addEventListener('hashchange',route);
+window.gcEv=function(p,t){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:p,title:t,event:true})}catch(e){}}
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href')||'';if(/^tel:/.test(h))window.gcEv('klik-bellen','Op Bellen getikt');else if(/wa\.me|whatsapp/.test(h))window.gcEv('klik-whatsapp','Op WhatsApp getikt')},true);
 window.addEventListener('hashchange',function(){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:location.pathname+location.hash,title:document.title})}catch(e){}});
 function card(e){var s=e[0],l=e[1],d=e[3],pr=eur0(d==='h'?P.horizontaal:P.verticaal);
  var kl={teak:'Teak',oak:'Eiken',walnut:'Walnoot',grey:'Grijs',black:'Antraciet'}[e[2]],prof=e[4]==='grain'?'Houtnerf':'Rhombus',rt=d==='h'?'horizontaal':'verticaal';
