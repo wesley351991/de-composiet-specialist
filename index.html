@@ -601,6 +601,9 @@ document.getElementById('form').addEventListener('submit',function(e){e.preventD
  var wt=['Hallo De Composiet Specialist, ik heb via de website een offerte aangevraagd:','','Naam: '+n,'Woonplaats: '+(data.Woonplaats!=='-'?data.Woonplaats+' ':'')+'('+p+')','Telefoon: '+data.Telefoon,'E-mail: '+m,'','Ontwerp: '+ontwerp,'Poort: '+data.Poort,'Oude schutting slopen: '+data['Oude schutting slopen'],'Afvoeren: '+data.Afvoeren,'Hoogteverschil: '+data.Hoogteverschil,'Plaatsing: '+data.Plaatsing,'Prijsindicatie: '+el('price').textContent+' (incl. plaatsing'+(KORTING?', incl. '+KORTING+'% openingskorting':'')+')'].join('\n');
  var wa='https://wa.me/31641071486?text='+encodeURIComponent(wt);
  if(window.gcEv)window.gcEv('offerte-verstuurd','Offerte verstuurd');
+ try{var pv=Number(String(el('price').textContent).replace(/[^0-9,]/g,'').replace(',','.'))||0,mv=parseFloat(String(el('meters').textContent).replace(',','.'))||0;
+ var pb=pv<1000?'0-1000':pv<2000?'1000-2000':pv<3000?'2000-3000':pv<5000?'3000-5000':'5000+',mb=mv<5?'0-5':mv<10?'5-10':mv<20?'10-20':'20+';
+ window.gcEv('prijs-'+pb,'Prijs offerte');window.gcEv('meters-'+mb,'Meters offerte')}catch(x){}
  try{window.open(wa,'_blank','noopener')}catch(x){}
  if(btn){btn.disabled=true;btn.dataset.t=btn.textContent;btn.textContent='Bezig met versturen…'}
  data["Situatiefoto's"]=SIT.length?SIT.length+' foto(\'s), zie bijlage':'Geen';
@@ -638,6 +641,15 @@ document.addEventListener('DOMContentLoaded',function(){var m={color:'kleur-',pr
 Object.keys(m).forEach(function(id){var e=document.getElementById(id);if(!e)return;['input','change'].forEach(function(ev){e.addEventListener(ev,function(){once(m[id]+e.value,'Keuze '+id)})})});
 var g=document.getElementById('gate');if(g)g.addEventListener('change',function(){if(g.value!=='0')once('poort-gekozen','Poort toegevoegd')});
 var o=document.getElementById('old');if(o)o.addEventListener('change',function(){if(o.value==='1')once('slopen-gekozen','Slopen aangevinkt')})})})();
+(function(){var seen={};function once(k,t){if(seen[k])return;seen[k]=1;if(window.gcEv)window.gcEv(k,t)}
+document.addEventListener('DOMContentLoaded',function(){
+var v=document.querySelector('.vid video');if(v)v.addEventListener('play',function(){once('video-afgespeeld','Video afgespeeld')});
+var f=document.getElementById('fotos');if(f)f.addEventListener('change',function(){if(f.files&&f.files.length)once('fotos-toegevoegd','Situatiefoto toegevoegd')});
+var c=document.querySelector('canvas');if(c)c.addEventListener('pointerdown',function(){once('3d-gedraaid','3D gedraaid')});
+var pt=document.querySelector('.ptable');if(pt&&window.IntersectionObserver){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){once('prijzen-bekeken','Prijzen bekeken');io.disconnect()}})});io.observe(pt)}
+var ft=document.querySelector('footer');if(ft&&window.IntersectionObserver){var io2=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){once('helemaal-gescrold','Tot onderaan gescrold');io2.disconnect()}})});io2.observe(ft)}
+if(typeof openLb==='function'){var o=openLb;window.openLb=openLb=function(){once('foto-vergroot','Foto groot bekeken');return o.apply(this,arguments)}}
+})})();
 window.gcEv=function(p,t){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:p,title:t,event:true})}catch(e){}}
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href')||'';if(/^tel:/.test(h))window.gcEv('klik-bellen','Op Bellen getikt');else if(/wa\.me|whatsapp/.test(h))window.gcEv('klik-whatsapp','Op WhatsApp getikt');else if(/^mailto:/.test(h))window.gcEv('klik-mail','Op e-mail getikt')},true);
 window.addEventListener('hashchange',function(){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:location.pathname+location.hash,title:document.title})}catch(e){}});
