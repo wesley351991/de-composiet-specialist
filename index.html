@@ -633,8 +633,13 @@ function route(){var h=(location.hash||'#home').slice(1),p=PAGES.indexOf(h)>=0?h
  document.querySelectorAll('.links a[data-p]').forEach(function(a){if(a.dataset.p===p)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
  document.title=TITLES[p];window.scrollTo(0,0);if(t)setTimeout(function(){t.scrollIntoView()},0);if(p==='offerte')draw()}
 window.addEventListener('hashchange',route);
+(function(){var seen={};function once(k,t){if(seen[k])return;seen[k]=1;if(window.gcEv)window.gcEv(k,t)}
+document.addEventListener('DOMContentLoaded',function(){var m={color:'kleur-',profile:'profiel-',height:'hoogte-',direction:'richting-'};
+Object.keys(m).forEach(function(id){var e=document.getElementById(id);if(!e)return;['input','change'].forEach(function(ev){e.addEventListener(ev,function(){once(m[id]+e.value,'Keuze '+id)})})});
+var g=document.getElementById('gate');if(g)g.addEventListener('change',function(){if(g.value!=='0')once('poort-gekozen','Poort toegevoegd')});
+var o=document.getElementById('old');if(o)o.addEventListener('change',function(){if(o.value==='1')once('slopen-gekozen','Slopen aangevinkt')})})})();
 window.gcEv=function(p,t){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:p,title:t,event:true})}catch(e){}}
-document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href')||'';if(/^tel:/.test(h))window.gcEv('klik-bellen','Op Bellen getikt');else if(/wa\.me|whatsapp/.test(h))window.gcEv('klik-whatsapp','Op WhatsApp getikt')},true);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href')||'';if(/^tel:/.test(h))window.gcEv('klik-bellen','Op Bellen getikt');else if(/wa\.me|whatsapp/.test(h))window.gcEv('klik-whatsapp','Op WhatsApp getikt');else if(/^mailto:/.test(h))window.gcEv('klik-mail','Op e-mail getikt')},true);
 window.addEventListener('hashchange',function(){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:location.pathname+location.hash,title:document.title})}catch(e){}});
 function card(e){var s=e[0],l=e[1],d=e[3],pr=eur0(d==='h'?P.horizontaal:P.verticaal);
  var kl={teak:'Teak',oak:'Eiken',walnut:'Walnoot',grey:'Grijs',black:'Antraciet'}[e[2]],prof=e[4]==='grain'?'Houtnerf':'Rhombus',rt=d==='h'?'horizontaal':'verticaal';

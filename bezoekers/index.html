@@ -92,7 +92,7 @@ function setup(msg){
 
 var PAGES={'/':['🏠','Homepage'],'/#home':['🏠','Homepage'],'/#schuttingen':['🧱','Schuttingen & prijzen'],'/#projecten':['📸','Projecten (foto\'s)'],'/#offerte':['📝','Offerte maken'],'/#contact':['📞','Contact'],'/voorwaarden/':['📄','Voorwaarden'],
  'offerte-verstuurd':['✅','Offerte verstuurd'],'klik-whatsapp':['💬','Op WhatsApp getikt'],'klik-bellen':['📱','Op Bellen getikt']};
-function pageName(p,t){if(PAGES[p])return PAGES[p];if(/^\/#/.test(p))return['📄',p.slice(2)];return['📄',t||p]}
+function pageName(p,t){if(PAGES[p])return PAGES[p];var cm=/^\/composiet-schutting-([a-z-]+)\/?$/.exec(p);if(cm)return['📍','Stadspagina '+cm[1].replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()}).replace('Den Bosch',"'s-Hertogenbosch")];if(/^\/#/.test(p))return['📄',p.slice(2)];return['📄',t||p]}
 function refIcon(n){n=(n||'').toLowerCase();if(!n||n==='(no referrer)'||n==='direct')return['🔗','Direct (link getypt of opgeslagen)'];
  if(n.indexOf('google')>-1)return['🔍','Google'];if(n.indexOf('facebook')>-1||n.indexOf('fb.')>-1)return['📘','Facebook'];if(n.indexOf('instagram')>-1)return['📷','Instagram'];if(n.indexOf('tiktok')>-1)return['🎵','TikTok'];if(n.indexOf('whatsapp')>-1)return['💬','WhatsApp'];if(n.indexOf('bing')>-1)return['🔍','Bing'];if(n.indexOf('marktplaats')>-1)return['🛒','Marktplaats'];return['🌐',n]}
 var SYS={'ios':['📱','iPhone / iPad'],'android':['📱','Android-telefoon'],'windows':['💻','Windows-computer'],'macos':['💻','Mac'],'linux':['💻','Linux'],'chrome os':['💻','Chromebook']};
@@ -121,24 +121,27 @@ function load(){
  if(!tok)return setup();
  document.getElementById('reload').hidden=false;
  var r=range(PER),q=rq(r),qp={start:iso(new Date(Math.floor(r.ps/36e5)*36e5)),end:iso(new Date(Math.floor(r.s/36e5)*36e5))};
- app.innerHTML=tabs()+'<div class="spin">Gegevens ophalen…</div>';bindTabs();
+ app.innerHTML=tabs()+'<div class="spin">Gegevens ophalen… (± 8 seconden)</div>';bindTabs();
  Promise.all([
   api('stats/total',Object.assign({},q)),
   api('stats/total',qp).catch(function(){return{total:0}}),
-  api('stats/hits',Object.assign({limit:20,daily:true},q)),
+  api('stats/hits',Object.assign({limit:60,daily:true},q)),
   api('stats/toprefs',Object.assign({limit:10},q)),
   api('stats/locations',Object.assign({limit:10},q)),
   api('stats/systems',Object.assign({limit:10},q)),
   api('stats/locations/NL',Object.assign({limit:15},q)).catch(function(){return{stats:[]}}),
+  api('stats/browsers',Object.assign({limit:8},q)).catch(function(){return{stats:[]}}),
+  api('stats/sizes',Object.assign({limit:8},q)).catch(function(){return{stats:[]}}),
+  api('stats/languages',Object.assign({limit:8},q)).catch(function(){return{stats:[]}}),
   PER==='1'?null:api('stats/total',{start:iso(sod(new Date())),end:iso(new Date(Math.ceil(Date.now()/36e5)*36e5))}).catch(function(){return{total:0}})
- ]).then(function(a){render(a[0],a[1],a[2],a[3],a[4],a[5],a[7]||a[0],a[6])}).catch(function(e){
+ ]).then(function(a){render(a[0],a[1],a[2],a[3],a[4],a[5],a[10]||a[0],a[6],a[7],a[8],a[9])}).catch(function(e){
   if(e&&e.auth){try{localStorage.removeItem(KEY)}catch(x){}tok=null;return setup('Deze sleutel werkt niet (meer). Maak een nieuwe aan en zet het vinkje bij "Read statistics".')}
   app.innerHTML=tabs()+'<div class="card"><h2>Even geen verbinding</h2><p class="sub">De gegevens konden niet worden opgehaald. Wacht een paar seconden en tik op Ververs.</p><p class="sub" style="font-size:12px">Code: '+esc((e&&e.status)||'netwerk')+' '+esc(((e&&e.msg)||String(e&&e.message||'')).slice(0,140))+'</p></div>';bindTabs()});
 }
 function tabs(){return'<div class="tabs">'+[['1','Vandaag'],['7','7 dagen'],['30','30 dagen'],['jaar','Dit jaar']].map(function(t){return'<button type="button" data-p="'+t[0]+'" class="'+(t[0]===PER?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div>'}
 function bindTabs(){app.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){PER=b.dataset.p;try{localStorage.setItem('gc_per',PER)}catch(e){}load()}})}
 
-function render(tot,prev,hits,refs,locs,sys,today,prov){
+function render(tot,prev,hits,refs,locs,sys,today,prov,brw,siz,lng){
  var T=tot.total||0,events=(hits.hits||[]).filter(function(h){return h.event}),pages=(hits.hits||[]).filter(function(h){return!h.event});
  function ev(p){var h=events.find(function(x){return x.path===p});return h?h.count:0}
  var off=ev('offerte-verstuurd'),wa=ev('klik-whatsapp'),bel=ev('klik-bellen');
@@ -159,8 +162,57 @@ function render(tot,prev,hits,refs,locs,sys,today,prov){
   h+='<div class="card"><h2>Bezoekers per '+(PER==='jaar'?'maand':'dag')+'</h2><p class="sub">Hoe hoger de balk, hoe meer mensen je site die '+(PER==='jaar'?'maand':'dag')+' bekeken.</p><div class="chart">'+days.map(function(d){return'<div class="b'+(d.day===td?' today':'')+'">'+(showN||d.daily===mx?'<span class="n">'+d.daily+'</span>':'')+'<div class="bar" style="height:'+(d.daily/mx*100)+'%"></div></div>'}).join('')+'</div><div class="xl">'+days.map(function(d,i){return'<span>'+(days.length>16&&i%5&&i!==days.length-1?'':lab(d.day))+'</span>'}).join('')+'</div></div>';
  } else if(PER==='1'&&st.length){var hr=(st[st.length-1].hourly||[]);var mx2=Math.max.apply(null,hr)||1;
   h+='<div class="card"><h2>Bezoekers per uur (vandaag)</h2><p class="sub">Op welk uur mensen je site bekeken.</p><div class="chart">'+hr.map(function(v,i){return'<div class="b">'+(v===mx2&&v?'<span class="n">'+v+'</span>':'')+'<div class="bar" style="height:'+(v/mx2*100)+'%"></div></div>'}).join('')+'</div><div class="xl">'+hr.map(function(v,i){return'<span>'+(i%6?'':i+'u')+'</span>'}).join('')+'</div></div>'}
+
+ // ===== extra inzichten =====
+ var vis=T-(tot.total_events||0),stA=(tot.stats||[]),nd=Math.max(1,PER==='1'?1:(PER==='jaar'?stA.length:Number(PER)));
+ var dsum={},hsum=new Array(24).fill(0),wsum=[0,0,0,0,0,0,0],DGL=['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+ stA.forEach(function(d){(d.hourly||[]).forEach(function(v,i){hsum[i]+=v});var x=new Date(d.day+'T12:00:00');wsum[x.getDay()]+=d.daily;dsum[d.day]=d.daily});
+ var bestDay=Object.keys(dsum).sort(function(a,b){return dsum[b]-dsum[a]})[0],bestH=hsum.indexOf(Math.max.apply(null,hsum)),bestW=wsum.indexOf(Math.max.apply(null,wsum));
+ function pc(a,b){return b?Math.round(a/b*1000)/10+'%':'–'}
+ var ins='<div class="card"><h2>In één oogopslag</h2><p class="sub">Belangrijkste cijfers van '+LBL[PER]+'.</p><ul class="list">';
+ function row(ic,t,v){ins+='<li><span class="ic">'+ic+'</span><div><div class="nm" style="white-space:normal">'+t+'</div></div><span class="ct">'+v+'</span></li>'}
+ row('📊','Gemiddeld per dag',nf(Math.round(vis/nd)));
+ if(bestDay&&dsum[bestDay]&&PER!=='1')row('🏆','Drukste dag: '+new Date(bestDay+'T12:00:00').toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'}),nf(dsum[bestDay]));
+ if(hsum[bestH])row('⏰','Drukste uur: '+bestH+':00 – '+(bestH+1)+':00',nf(hsum[bestH]));
+ if(PER!=='1'&&wsum[bestW])row('📅','Beste dag van de week: '+DGL[bestW],nf(wsum[bestW]));
+ row('📝','Bezoekers die de offertetool openen',pc(offView,vis));
+ row('✅','Bezoekers die een offerte versturen',pc(off,vis));
+ row('💬','Bezoekers die op WhatsApp of Bellen tikken',pc(wa+bel,vis));
+ ins+='</ul><p class="sub" style="margin:10px 0 0;font-size:12px">Tip: plaats je berichten op Facebook en TikTok net vóór het drukste uur.</p></div>';
+ // wanneer
+ var whenH='<div class="card"><h2>Wanneer kijken ze?</h2><p class="sub">Per uur van de dag, opgeteld over '+LBL[PER]+'.</p><div class="chart">'+hsum.map(function(v,i){var m=Math.max.apply(null,hsum)||1;return'<div class="b'+(i===bestH&&v?' today':'')+'">'+(i===bestH&&v?'<span class="n">'+v+'</span>':'')+'<div class="bar" style="height:'+(v/m*100)+'%"></div></div>'}).join('')+'</div><div class="xl">'+hsum.map(function(v,i){return'<span>'+(i%6?'':i+'u')+'</span>'}).join('')+'</div>';
+ if(PER!=='1'){var order=[1,2,3,4,5,6,0],mw=Math.max.apply(null,wsum)||1;whenH+='<p class="sub" style="margin:16px 0 4px">Per dag van de week</p><div class="chart" style="height:110px">'+order.map(function(i){return'<div class="b'+(i===bestW&&wsum[i]?' today':'')+'"><span class="n">'+wsum[i]+'</span><div class="bar" style="height:'+(wsum[i]/mw*100)+'%"></div></div>'}).join('')+'</div><div class="xl">'+order.map(function(i){return'<span>'+['zo','ma','di','wo','do','vr','za'][i]+'</span>'}).join('')+'</div>'}
+ whenH+='</div>';
+ // keuzes in offertetool
+ var KN={'kleur-teak':['🟫','Teak'],'kleur-oak':['🟧','Eiken'],'kleur-walnut':['🟤','Walnoot'],'kleur-grey':['⬜','Grijs'],'kleur-black':['⬛','Antraciet']};
+ var kl=events.filter(function(e){return/^kleur-/.test(e.path)}),pr=events.filter(function(e){return/^profiel-/.test(e.path)}),hg=events.filter(function(e){return/^hoogte-/.test(e.path)}),rc=events.filter(function(e){return/^richting-/.test(e.path)});
+ var PN={'profiel-grain':['🪵','Houtnerf'],'profiel-rib':['〰️','Rhombus'],'profiel-brushed':['🖌️','Geborsteld'],'richting-h':['↔️','Horizontaal'],'richting-v':['↕️','Verticaal']};
+ function sumc(a){return a.reduce(function(x,y){return x+y.count},0)}
+ var keuze='<div class="card"><h2>Wat kiezen ze in de offertetool?</h2><p class="sub">Welke opties bezoekers aantikken bij het ontwerpen.</p>';
+ if(!(kl.length+pr.length+hg.length+rc.length))keuze+='<p class="empty">Nog geen keuzes gemeten. Dit wordt vanaf nu bijgehouden.</p>';
+ else{if(kl.length)keuze+='<p class="sub" style="margin:8px 0 0"><b>Kleur</b></p>'+list(kl,sumc(kl),function(i){return KN[i.path]||['🎨',i.path]});
+  if(pr.length)keuze+='<p class="sub" style="margin:12px 0 0"><b>Profiel</b></p>'+list(pr,sumc(pr),function(i){return PN[i.path]||['🪵',i.path]});
+  if(rc.length)keuze+='<p class="sub" style="margin:12px 0 0"><b>Richting</b></p>'+list(rc,sumc(rc),function(i){return PN[i.path]||['↔️',i.path]});
+  if(hg.length)keuze+='<p class="sub" style="margin:12px 0 0"><b>Hoogte</b></p>'+list(hg,sumc(hg),function(i){return['📏',Math.round(parseFloat(i.path.slice(7))*100)+' cm']})}
+ keuze+='</div>';
+ // stadspagina's
+ var cityP=pages.filter(function(x){return/^\/composiet-schutting-/.test(x.path)});
+ var city='<div class="card"><h2>Stadspagina\'s</h2><p class="sub">Bezoekers die via Google op een stadspagina binnenkwamen.</p>'+(cityP.length?list(cityP,sumc(cityP),function(i){return pageName(i.path,i.title)},15):'<p class="empty">Nog geen bezoekers op de stadspagina\'s. Google heeft daar meestal een paar weken voor nodig.</p>')+'</div>';
+ // alle kliks
+ var EN={'offerte-verstuurd':['✅','Offerte verstuurd'],'klik-whatsapp':['💬','Op WhatsApp getikt'],'klik-bellen':['📱','Op Bellen getikt'],'klik-mail':['📧','Op e-mail getikt'],'poort-gekozen':['🚪','Poort toegevoegd'],'slopen-gekozen':['🔨','Oude schutting slopen aangevinkt'],'fotos-toegevoegd':['📷','Situatiefoto\'s toegevoegd']};
+ var act=events.filter(function(e){return EN[e.path]});
+ var acts='<div class="card"><h2>Acties van bezoekers</h2><p class="sub">Waar bezoekers op tikken en wat ze doen.</p>'+(act.length?list(act,0,function(i){return EN[i.path]}):'<p class="empty">Nog geen acties gemeten in deze periode.</p>')+'</div>';
+ // apparaat/browser/taal
+ var SZ={'phone':['📱','Telefoon'],'largephone':['📱','Grote telefoon'],'tablet':['📲','Tablet'],'desktop':['💻','Computer'],'desktophd':['🖥️','Groot scherm'],'unknown':['❔','Onbekend']};
+ var szs=(siz&&siz.stats)||[],bws=(brw&&brw.stats)||[],lgs=(lng&&lng.stats)||[];
+ var dev='<div class="card"><h2>Schermgrootte</h2><p class="sub">Op wat voor scherm je site bekeken wordt.</p>'+list(szs,sumc(szs),function(i){return SZ[(i.id||i.name||'').toLowerCase()]||['🖥️',i.name||'Onbekend']})+'</div>';
+ var BI={'safari':'🧭','chrome':'🌐','firefox':'🦊','edge':'🌀','samsung':'📱','facebook':'📘','instagram':'📷','tiktok':'🎵'};
+ dev+='<div class="card"><h2>Welke browser of app?</h2><p class="sub">Ook zie je hier of mensen je site openden vanuit Facebook, Instagram of TikTok.</p>'+list(bws,sumc(bws),function(i){var k=(i.name||'').toLowerCase(),ic='🌐';for(var b in BI)if(k.indexOf(b)>-1)ic=BI[b];return[ic,i.name||'Onbekend']})+'</div>';
+ var LN={'nl':'Nederlands','en':'Engels','de':'Duits','fr':'Frans','pl':'Pools','tr':'Turks','ar':'Arabisch'};
+ dev+='<div class="card"><h2>Taal van de telefoon</h2><p class="sub">In welke taal de telefoon of computer van bezoekers staat.</p>'+list(lgs,sumc(lgs),function(i){var c=String(i.id||i.name||'').slice(0,2).toLowerCase();return['🗣️',LN[c]||i.name||'Onbekend']})+'</div>';
+ h+=ins+whenH+acts+keuze;
  var pt=pages.reduce(function(s,x){return s+x.count},0);
- h+='<div class="card"><h2>Welke pagina\'s bekijken ze?</h2><p class="sub">Het aantal bezoekers per onderdeel van je site.</p>'+list(pages.map(function(x){return{count:x.count,path:x.path,title:x.title}}),0,function(i){return pageName(i.path,i.title)})+'</div>';
+ h+='<div class="card"><h2>Welke pagina\'s bekijken ze?</h2><p class="sub">Het aantal bezoekers per onderdeel van je site.</p>'+list(pages.filter(function(x){return!/^\/composiet-schutting-/.test(x.path)}).map(function(x){return{count:x.count,path:x.path,title:x.title}}),0,function(i){return pageName(i.path,i.title)})+'</div>';
  var rt=(refs.stats||[]).reduce(function(s,x){return s+x.count},0);
  h+='<div class="card"><h2>Hoe vinden ze je?</h2><p class="sub">Via welke website of app mensen bij jou terechtkwamen.</p>'+list(refs.stats||[],rt,function(i){return refIcon(i.name)})+'</div>';
  var lt=(locs.stats||[]).reduce(function(s,x){return s+x.count},0);
@@ -169,6 +221,7 @@ function render(tot,prev,hits,refs,locs,sys,today,prov){
  h+='<div class="card"><h2>Uit welk land?</h2><p class="sub">Land of regio van de bezoekers.</p>'+list(locs.stats||[],lt,locName)+'</div>';
  var mob=0,dt=0;(sys.stats||[]).forEach(function(s){var k=(s.name||'').toLowerCase();if(k.indexOf('ios')===0||k.indexOf('android')===0)mob+=s.count;else dt+=s.count});
  h+='<div class="card"><h2>Telefoon of computer?</h2><p class="sub">'+(mob+dt?Math.round(mob/(mob+dt)*100)+'% bekijkt je site op een telefoon.':'Waarmee mensen je site bekijken.')+'</p>'+list(sys.stats||[],mob+dt,function(i){return sysName(i.name)})+'</div>';
+ h+=city+dev;
  if(!T)h='<div class="tip">Nog geen bezoekers in deze periode. Deel je website op Facebook, TikTok en WhatsApp, dan zie je hier snel de eerste bezoekers.</div>'+h;
  h+='<p class="foot">Bijgewerkt om '+new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})+' · <a href="#" id="logout" style="color:inherit">sleutel wissen</a> · <a href="'+SITE+'" target="_blank" rel="noopener" style="color:inherit">uitgebreide statistieken</a></p>';
  app.innerHTML=tabs()+h;bindTabs();
