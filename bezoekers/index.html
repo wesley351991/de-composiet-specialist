@@ -210,7 +210,10 @@ function render(tot,prev,hits,refs,locs,sys,today,prov,brw,siz,lng){
  dev+='<div class="card"><h2>Welke browser of app?</h2><p class="sub">Ook zie je hier of mensen je site openden vanuit Facebook, Instagram of TikTok.</p>'+list(bws,sumc(bws),function(i){var k=(i.name||'').toLowerCase(),ic='🌐';for(var b in BI)if(k.indexOf(b)>-1)ic=BI[b];return[ic,i.name||'Onbekend']})+'</div>';
  var LN={'nl':'Nederlands','en':'Engels','de':'Duits','fr':'Frans','pl':'Pools','tr':'Turks','ar':'Arabisch'};
  dev+='<div class="card"><h2>Taal van de telefoon</h2><p class="sub">In welke taal de telefoon of computer van bezoekers staat.</p>'+list(lgs,sumc(lgs),function(i){var c=String(i.id||i.name||'').slice(0,2).toLowerCase();return['🗣️',LN[c]||i.name||'Onbekend']})+'</div>';
- h+=ins+whenH+acts+keuze;
+ var LS=(locs.stats||[]),LT=LS.reduce(function(a,x){return a+x.count},0);
+ var landC='<div class="card"><h2>🌍 Uit welk land?</h2><p class="sub">Uit welke landen je bezoekers komen.</p>'+(LS.length?list(LS,LT,locName,15):'<p class="empty">Nog geen landen bekend in deze periode. Staat dit leeg terwijl je wel bezoekers hebt? Zet dan in GoatCounter bij <b>Settings → Collect</b> het vinkje bij <b>Location</b> aan.</p>')+'</div>';
+ if(LS.length){var t0=locName(LS[0]);ins=ins.replace('</ul>','<li><span class="ic">'+t0[0]+'</span><div><div class="nm" style="white-space:normal">Meeste bezoekers uit '+esc(t0[1])+'</div></div><span class="ct">'+pc(LS[0].count,LT)+'</span></li></ul>')}
+ h+=ins.replace('</ul><p class="sub" style="margin:10px 0 0;font-size:12px">Tip','</ul><p class="sub" style="margin:10px 0 0;font-size:12px">Tip')+whenH+landC+acts+keuze;
  var pt=pages.reduce(function(s,x){return s+x.count},0);
  h+='<div class="card"><h2>Welke pagina\'s bekijken ze?</h2><p class="sub">Het aantal bezoekers per onderdeel van je site.</p>'+list(pages.filter(function(x){return!/^\/composiet-schutting-/.test(x.path)}).map(function(x){return{count:x.count,path:x.path,title:x.title}}),0,function(i){return pageName(i.path,i.title)})+'</div>';
  var rt=(refs.stats||[]).reduce(function(s,x){return s+x.count},0);
@@ -218,7 +221,6 @@ function render(tot,prev,hits,refs,locs,sys,today,prov,brw,siz,lng){
  var lt=(locs.stats||[]).reduce(function(s,x){return s+x.count},0);
  var pv=((prov&&prov.stats)||[]),pvt=pv.reduce(function(a,x){return a+x.count},0);
  h+='<div class="card"><h2>Uit welke provincie?</h2><p class="sub">Bezoekers uit Nederland, per provincie. 📍 = jouw werkgebied.</p>'+(pv.length&&!(pv.length===1&&!pv[0].name)?list(pv,pvt,provName,12):'<p class="empty">Nog geen provincies bekend. Zet in GoatCounter bij <b>Settings → Collect</b> het vinkje bij <b>Region</b> aan, dan verschijnen ze hier.</p>')+'<p class="sub" style="margin:10px 0 0;font-size:12px">Exacte plaatsen (zoals Helmond of Eindhoven) houdt GoatCounter niet bij, uit privacy.</p></div>';
- h+='<div class="card"><h2>Uit welk land?</h2><p class="sub">Land of regio van de bezoekers.</p>'+list(locs.stats||[],lt,locName)+'</div>';
  var mob=0,dt=0;(sys.stats||[]).forEach(function(s){var k=(s.name||'').toLowerCase();if(k.indexOf('ios')===0||k.indexOf('android')===0)mob+=s.count;else dt+=s.count});
  h+='<div class="card"><h2>Telefoon of computer?</h2><p class="sub">'+(mob+dt?Math.round(mob/(mob+dt)*100)+'% bekijkt je site op een telefoon.':'Waarmee mensen je site bekijken.')+'</p>'+list(sys.stats||[],mob+dt,function(i){return sysName(i.name)})+'</div>';
  h+=city+dev;
