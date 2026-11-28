@@ -84,7 +84,7 @@ function api(path,q,tries){var u=new URL(SITE+'/api/v0/'+path);Object.keys(q||{}
 function setup(msg){
  document.getElementById('reload').hidden=true;
  app.innerHTML='<div class="card setup"><h2>Eenmalig instellen</h2><p class="sub">Deze pagina laat in gewone taal zien hoeveel mensen je website bekijken. Daarvoor is één keer een sleutel van GoatCounter nodig.</p>'+
- '<ol><li>Open <a href="'+SITE+'/user/api" target="_blank" rel="noopener"><b>deze link</b></a> en log in bij GoatCounter.</li><li>Tik op <b>New API token</b> (nieuwe sleutel).</li><li>Geef hem een naam, bijv. <b>telefoon</b>, en zet alleen een vinkje bij <b>Read statistics</b>.</li><li>Tik op <b>Create</b> en kopieer de lange code.</li><li>Plak de code hieronder.</li></ol>'+
+ '<ol><li>Open <a href="'+SITE+'/user/api" target="_blank" rel="noopener"><b>deze link</b></a> en log in bij GoatCounter.</li><li>Tik op <b>New API token</b> (nieuwe sleutel).</li><li>Geef hem een naam, bijv. <b>telefoon</b>, en zet vinkjes bij <b>Read statistics</b> én <b>Export</b>.</li><li>Tik op <b>Create</b>. Kopieer de <b>lange code</b> uit de kolom <b>Token</b> (niet de naam).</li><li>Plak de code hieronder.</li></ol>'+
  '<input id="tk" placeholder="Plak hier je sleutel" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn" id="save" type="button">Opslaan en bekijken</button>'+(msg?'<p class="err">'+esc(msg)+'</p>':'')+
  '<p class="sub" style="margin-top:12px">De sleutel wordt alleen op deze telefoon bewaard.</p></div>';
  document.getElementById('save').onclick=function(){var v=document.getElementById('tk').value.trim();if(!v)return;tok=v;try{localStorage.setItem(KEY,v)}catch(e){}load()};
@@ -136,7 +136,7 @@ function load(){
   api('stats/languages',Object.assign({limit:8},q)).catch(function(){return{stats:[]}}),
   PER==='1'?null:api('stats/total',{start:iso(sod(new Date())),end:iso(new Date(Math.ceil(Date.now()/36e5)*36e5))}).catch(function(){return{total:0}})
  ]).then(function(a){render(a[0],a[1],a[2],a[3],a[4],a[5],a[11]||a[0],a[6],a[8],a[9],a[10],a[7])}).catch(function(e){
-  if(e&&e.auth){try{localStorage.removeItem(KEY)}catch(x){}tok=null;return setup('Deze sleutel werkt niet (meer). Maak een nieuwe aan en zet het vinkje bij "Read statistics".')}
+  if(e&&e.auth){try{localStorage.removeItem(KEY)}catch(x){}tok=null;return setup('Deze sleutel werkt niet (meer). Maak een nieuwe aan met vinkjes bij "Read statistics" en "Export", en plak de lange code (niet de naam).')}
   app.innerHTML=tabs()+'<div class="card"><h2>Even geen verbinding</h2><p class="sub">De gegevens konden niet worden opgehaald. Wacht een paar seconden en tik op Ververs.</p><p class="sub" style="font-size:12px">Code: '+esc((e&&e.status)||'netwerk')+' '+esc(((e&&e.msg)||String(e&&e.message||'')).slice(0,140))+'</p></div>';bindTabs()});
 }
 function tabs(){return'<div class="tabs">'+[['1','Vandaag'],['7','7 dagen'],['30','30 dagen'],['jaar','Dit jaar']].map(function(t){return'<button type="button" data-p="'+t[0]+'" class="'+(t[0]===PER?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div>'}
