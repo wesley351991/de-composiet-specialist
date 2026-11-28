@@ -244,11 +244,71 @@ function render(tot,prev,hits,refs,locs,sys,today,prov,brw,siz,lng,cmp){
  h+=city+dev;
  if(!T)h='<div class="tip">Nog geen bezoekers in deze periode. Deel je website op Facebook, TikTok en WhatsApp, dan zie je hier snel de eerste bezoekers.</div>'+h;
  h+='<p class="foot">Bijgewerkt om '+new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})+' · <a href="#" id="logout" style="color:inherit">sleutel wissen</a> · <a href="'+SITE+'" target="_blank" rel="noopener" style="color:inherit">uitgebreide statistieken</a></p>';
- app.innerHTML=tabs()+h;bindTabs();
+ h=h.replace('<div class="hero">','<div id="vlog"></div><div class="hero">');
+ app.innerHTML=tabs()+h;bindTabs();if(window.renderVlog)window.renderVlog();
  document.getElementById('logout').onclick=function(e){e.preventDefault();if(confirm('Sleutel van deze telefoon wissen?')){try{localStorage.removeItem(KEY)}catch(x){}tok=null;setup()}};
 }
 document.getElementById('reload').onclick=load;
 load();
+})();
+</script>
+
+<script>
+(function(){
+var SITE='https://decomposietspecialist.goatcounter.com',CK='gc_vlog';
+function tok(){try{return localStorage.getItem('gc_token')}catch(e){return null}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function req(path,opt){opt=opt||{};opt.headers={Authorization:'Bearer '+tok(),'Content-Type':'application/json'};return fetch(SITE+'/api/v0/'+path,opt)}
+var PROV={'NB':'Noord-Brabant','LI':'Limburg','GE':'Gelderland','UT':'Utrecht','NH':'Noord-Holland','ZH':'Zuid-Holland','ZE':'Zeeland','OV':'Overijssel','DR':'Drenthe','GR':'Groningen','FR':'Friesland','FL':'Flevoland'};
+var LAND={'NL':'Nederland','BE':'België','DE':'Duitsland','FR':'Frankrijk','GB':'Engeland','US':'Amerika','PL':'Polen','ES':'Spanje','TR':'Turkije'};
+function flag(c){return c&&c.length===2?String.fromCodePoint.apply(null,c.toUpperCase().split('').map(function(x){return 127397+x.charCodeAt(0)})):'🌍'}
+function place(l){l=String(l||'');var c=l.slice(0,2),r=l.split('-')[1];var t=(c==='NL'&&PROV[r])?PROV[r]:(LAND[c]||c||'Onbekend');return flag(c)+' '+t}
+var PG={'/':'Homepage','/#home':'Homepage','/#schuttingen':'Schuttingen & prijzen','/#projecten':'Projecten','/#offerte':'Offertetool','/#contact':'Contact','/voorwaarden/':'Voorwaarden'};
+var EV={'offerte-verstuurd':'✅ Offerte verstuurd','klik-whatsapp':'💬 WhatsApp getikt','klik-bellen':'📱 Bellen getikt','klik-mail':'📧 Mail getikt','poort-gekozen':'🚪 Poort gekozen','slopen-gekozen':'🔨 Slopen aangevinkt','prijzen-bekeken':'💶 Prijzen bekeken','video-afgespeeld':'🎬 Filmpje gekeken','foto-vergroot':'🔍 Foto vergroot','3d-gedraaid':'🔄 3D gedraaid','fotos-toegevoegd':'📷 Foto\'s toegevoegd','helemaal-gescrold':'⬇️ Tot onderaan'};
+function pname(p){if(PG[p])return PG[p];var m=/^\/composiet-schutting-([a-z-]+)/.exec(p);if(m)return'Stadspagina '+m[1].replace(/-/g,' ');p=p.replace(/^\/index\.html/,'/');return PG[p]||p}
+function evname(p){if(EV[p])return EV[p];if(/^kleur-/.test(p))return'🎨 Kleur '+({teak:'teak',oak:'eiken',walnut:'walnoot',grey:'grijs',black:'antraciet'}[p.slice(6)]||p.slice(6));if(/^profiel-/.test(p))return'🪵 '+({grain:'Houtnerf',rib:'Rhombus',brushed:'Geborsteld'}[p.slice(8)]||p.slice(8));if(/^hoogte-/.test(p))return'📏 '+Math.round(parseFloat(p.slice(7))*100)+' cm';if(/^richting-/.test(p))return p.slice(9)==='v'?'↕️ Verticaal':'↔️ Horizontaal';if(/^prijs-/.test(p))return'💶 Offerte € '+p.slice(6).replace('-',' – € ');if(/^meters-/.test(p))return'📏 '+p.slice(7).replace('-',' – ')+' meter';return p}
+function dev(sys,br,sz){var s=String(sys||'').toLowerCase(),b=String(br||'');var d=/ios/.test(s)?(/ipad/i.test(sz||'')?'iPad':'iPhone'):/android/.test(s)?'Android':/windows/.test(s)?'Windows-pc':/mac/.test(s)?'Mac':(sys||'Onbekend');var app=/facebook/i.test(b)?' · via Facebook-app':/instagram/i.test(b)?' · via Instagram-app':/tiktok/i.test(b)?' · via TikTok-app':'';return(/iPhone|Android/.test(d)?'📱 ':'💻 ')+d+app}
+function src(r){r=String(r||'').toLowerCase();if(!r)return'🔗 Direct';if(/google/.test(r))return'🔍 Google';if(/facebook|fb\./.test(r))return'📘 Facebook';if(/instagram/.test(r))return'📷 Instagram';if(/tiktok/.test(r))return'🎵 TikTok';if(/whatsapp/.test(r))return'💬 WhatsApp';if(/bing/.test(r))return'🔍 Bing';return'🌐 '+r}
+function parseCSV(t){var rows=[],row=[],f='',q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}else if(c==='"')q=true;else if(c===','){row.push(f);f=''}else if(c==='\n'){row.push(f);rows.push(row);row=[];f=''}else if(c!=='\r')f+=c}if(f||row.length){row.push(f);rows.push(row)}return rows}
+function build(csv){var R=parseCSV(csv);if(!R.length)return[];var H=R[0].map(function(h){return h.toLowerCase().replace(/^\d+/,'').replace(/[^a-z]/g,'')});
+ function col(){for(var i=0;i<arguments.length;i++){var k=H.indexOf(arguments[i]);if(k>-1)return k}return-1}
+ var C={p:col('path'),ev:col('event','isevent'),br:col('browser'),sy:col('system'),se:col('session'),bot:col('bot'),rf:col('referrer','ref'),sz:col('screensize','size'),lo:col('location'),fv:col('firstvisit'),dt:col('date','createdat','time')};
+ var S={};R.slice(1).forEach(function(r){if(r.length<3)return;if(C.bot>-1&&r[C.bot]&&r[C.bot]!=='0'&&r[C.bot]!=='false')return;var k=(C.se>-1?r[C.se]:'')||((r[C.br]||'')+(r[C.sy]||'')+(r[C.lo]||'')+String(r[C.dt]).slice(0,13));
+  var s=S[k]||(S[k]={start:r[C.dt],end:r[C.dt],pages:[],evs:[],loc:'',dev:'',src:'',first:false});
+  if(r[C.dt]<s.start)s.start=r[C.dt];if(r[C.dt]>s.end)s.end=r[C.dt];
+  var isE=C.ev>-1&&(r[C.ev]==='true'||r[C.ev]==='1'),p=r[C.p]||'';
+  if(isE){if(s.evs.indexOf(p)<0)s.evs.push(p)}else if(s.pages.indexOf(p)<0&&!/^\/(bezoekers|beheer|akkoord|oplevering)/.test(p))s.pages.push(p);
+  if(!s.loc&&r[C.lo])s.loc=r[C.lo];if(!s.dev)s.dev=dev(r[C.sy],r[C.br],r[C.sz]);if(!s.src&&r[C.rf])s.src=r[C.rf];if(C.fv>-1&&(r[C.fv]==='true'||r[C.fv]==='1'))s.first=true});
+ return Object.keys(S).map(function(k){return S[k]}).filter(function(s){return s.pages.length||s.evs.length}).sort(function(a,b){return a.start<b.start?1:-1})}
+function fmt(d){var x=new Date(d);if(isNaN(x))return d;var t=new Date();var same=x.toDateString()===t.toDateString(),y=new Date(t-864e5).toDateString()===x.toDateString();return(same?'Vandaag':y?'Gisteren':x.toLocaleDateString('nl-NL',{weekday:'short',day:'numeric',month:'short'}))+' '+x.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})}
+function dur(a,b){var m=Math.round((new Date(b)-new Date(a))/60000);return m<1?'< 1 min':m+' min'}
+var SHOW=15;
+function draw(state){var box=document.getElementById('vlog');if(!box)return;var h='<div class="card"><h2>👥 Wie was er op je site?</h2><p class="sub">Elk bezoek apart. Namen en adressen zijn niet zichtbaar (privacywet); die krijg je pas als iemand een offerte stuurt.</p>';
+ if(state.err)h+='<p class="err" style="margin:0 0 10px">'+state.err+'</p>';
+ if(state.list){var L=state.list;var nOff=L.filter(function(s){return s.evs.indexOf('offerte-verstuurd')>-1||s.evs.indexOf('klik-whatsapp')>-1||s.evs.indexOf('klik-bellen')>-1}).length;
+  h+='<p class="sub" style="margin:0 0 8px"><b>'+L.length+'</b> bezoeken · <b>'+nOff+'</b> '+(nOff===1?'nam':'namen')+' contact op · bijgewerkt '+fmt(state.at)+'</p>';
+  if(!L.length)h+='<p class="empty">Nog geen bezoeken gevonden.</p>';
+  h+=L.slice(0,SHOW).map(function(s){var hot=s.evs.some(function(e){return/offerte-verstuurd|klik-whatsapp|klik-bellen|klik-mail/.test(e)});
+   return'<div style="border-top:1px solid var(--line);padding:12px 0'+(hot?';background:linear-gradient(90deg,#eaf6ea,transparent);margin:0 -16px;padding-left:16px;padding-right:16px':'')+'"><div style="display:flex;justify-content:space-between;gap:8px;font-weight:700"><span>'+esc(fmt(s.start))+(hot?' 🔥':'')+'</span><span style="color:var(--mut);font-weight:600;font-size:13px">'+dur(s.start,s.end)+'</span></div>'+
+   '<div style="font-size:14px;margin-top:3px">'+esc(place(s.loc))+' · '+esc(s.dev)+'</div><div style="font-size:13.5px;color:var(--mut)">'+esc(src(s.src))+(s.first?' · nieuwe bezoeker':' · kwam eerder al')+'</div>'+
+   (s.pages.length?'<div style="font-size:13.5px;margin-top:4px">📄 '+s.pages.map(function(p){return esc(pname(p))}).join(' → ')+'</div>':'')+
+   (s.evs.length?'<div style="font-size:13px;margin-top:4px;display:flex;flex-wrap:wrap;gap:5px">'+s.evs.map(function(e){return'<span style="background:#F4E6CF;border-radius:999px;padding:2px 9px">'+esc(evname(e))+'</span>'}).join('')+'</div>':'')+'</div>'}).join('');
+  if(L.length>SHOW)h+='<button class="btn o" id="vmore" type="button">Meer bezoeken tonen ('+(L.length-SHOW)+')</button>'}
+ h+='<button class="btn'+(state.list?' o':'')+'" id="vload" type="button"'+(state.busy?' disabled':'')+'>'+(state.busy?'Bezig met ophalen… (± 30 sec)':state.list?'↻ Bezoekerslijst verversen':'Bezoekerslijst laden')+'</button><p class="sub" style="margin:8px 0 0;font-size:12px">GoatCounter staat dit maximaal 1× per uur toe.</p></div>';
+ box.innerHTML=h;var b=document.getElementById('vload');if(b)b.onclick=load;var m=document.getElementById('vmore');if(m)m.onclick=function(){SHOW+=20;draw(state)}}
+var ST={};try{var c=JSON.parse(localStorage.getItem(CK)||'null');if(c)ST={list:c.list,at:c.at}}catch(e){}
+function load(){if(!tok())return;ST.busy=true;ST.err='';draw(ST);
+ req('export',{method:'POST',body:JSON.stringify({format:'csv'})}).then(function(r){
+  if(r.status===401||r.status===403)throw{msg:'Je sleutel mag nog geen bezoekerslijst ophalen. Maak in GoatCounter een nieuwe sleutel met vinkjes bij <b>Read statistics</b> én <b>Export</b>, tik onderaan op "sleutel wissen" en plak de nieuwe sleutel.'};
+  if(r.status===429)throw{msg:'Je hebt de lijst het afgelopen uur al opgehaald. Probeer het over een uur opnieuw.'};
+  if(!r.ok)return r.text().then(function(t){throw{msg:'Ophalen mislukt ('+r.status+'): '+esc(t.slice(0,120))}});return r.json()})
+ .then(function(ex){var id=ex.id,n=0;function poll(){return wait(3000).then(function(){return req('export/'+id)}).then(function(r){return r.json()}).then(function(j){if(j.finished_at)return id;if(++n>30)throw{msg:'Het duurde te lang. Probeer het later opnieuw.'};return poll()})}return poll()})
+ .then(function(id){return req('export/'+id+'/download')}).then(function(r){if(!r.ok)throw{msg:'Downloaden mislukt ('+r.status+').'};
+  if(window.DecompressionStream)return new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).text().catch(function(){return r.text()});return r.text()})
+ .then(function(csv){ST={list:build(csv),at:new Date().toISOString()};try{localStorage.setItem(CK,JSON.stringify({list:ST.list.slice(0,300),at:ST.at}))}catch(e){}draw(ST)})
+ .catch(function(e){ST.busy=false;ST.err=(e&&e.msg)||'Er ging iets mis. Probeer het later opnieuw.';draw(ST)})}
+window.renderVlog=function(){draw(ST)};
 })();
 </script>
 </body>
